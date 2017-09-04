@@ -51,6 +51,8 @@
 		FD3642781F5D348C009210C0 /* ZLTestPodsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZLTestPodsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD36427C1F5D348C009210C0 /* ZLTestPodsUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLTestPodsUITests.m; sourceTree = "<group>"; };
 		FD36427E1F5D348C009210C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FD36428B1F5D34C3009210C0 /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		FD36428C1F5D34C3009210C0 /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 		FD36424C1F5D348C009210C0 = {
 			isa = PBXGroup;
 			children = (
+				FD36428A1F5D34C3009210C0 /* TestFolder */,
 				FD3642571F5D348C009210C0 /* ZLTestPods */,
 				FD3642701F5D348C009210C0 /* ZLTestPodsTests */,
 				FD36427B1F5D348C009210C0 /* ZLTestPodsUITests */,
@@ -130,6 +133,15 @@
 				FD36427E1F5D348C009210C0 /* Info.plist */,
 			);
 			path = ZLTestPodsUITests;
+			sourceTree = "<group>";
+		};
+		FD36428A1F5D34C3009210C0 /* TestFolder */ = {
+			isa = PBXGroup;
+			children = (
+				FD36428B1F5D34C3009210C0 /* TestViewController.h */,
+				FD36428C1F5D34C3009210C0 /* TestViewController.m */,
+			);
+			path = TestFolder;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
