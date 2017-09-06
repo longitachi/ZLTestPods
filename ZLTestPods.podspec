@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
-  s.name         = 'TestFolder'
-  s.version      = '0.1.0'
+  s.name         = 'ZLTestPods'
+  s.version      = '0.1.1'
   s.summary      = 'test dependency'
   s.homepage     = 'https://github.com/longitachi/ZLTestPods'
   s.license      = 'MIT'
