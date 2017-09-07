@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E633201003804B966EEFA51C /* libPods-ZLTestPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D18952C785999BAAFE1093AF /* libPods-ZLTestPods.a */; };
 		FD145C3A1F5FE67000518B1C /* baoman.png in Resources */ = {isa = PBXBuildFile; fileRef = FD145C381F5FDF4300518B1C /* baoman.png */; };
 		FD145C3B1F5FE68E00518B1C /* wallet.json in Resources */ = {isa = PBXBuildFile; fileRef = FD145C391F5FE4B800518B1C /* wallet.json */; };
 		FD36425A1F5D348C009210C0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FD3642591F5D348C009210C0 /* AppDelegate.m */; };
@@ -38,6 +39,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7AF91FFC95CF95E4712B16A0 /* Pods-ZLTestPods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZLTestPods.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZLTestPods/Pods-ZLTestPods.release.xcconfig"; sourceTree = "<group>"; };
+		BBD104D44C251C0256CE020E /* Pods-ZLTestPods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZLTestPods.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZLTestPods/Pods-ZLTestPods.debug.xcconfig"; sourceTree = "<group>"; };
+		D18952C785999BAAFE1093AF /* libPods-ZLTestPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ZLTestPods.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD145C381F5FDF4300518B1C /* baoman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = baoman.png; sourceTree = "<group>"; };
 		FD145C391F5FE4B800518B1C /* wallet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = wallet.json; sourceTree = "<group>"; };
 		FD3642551F5D348C009210C0 /* ZLTestPods.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZLTestPods.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,41 +62,6 @@
 		FD36427E1F5D348C009210C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FD36428B1F5D34C3009210C0 /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
 		FD36428C1F5D34C3009210C0 /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
-		FDC779DC1F610AD100C91D6B /* NSData+ImageContentType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+ImageContentType.h"; sourceTree = "<group>"; };
-		FDC779DD1F610AD100C91D6B /* NSData+ImageContentType.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+ImageContentType.m"; sourceTree = "<group>"; };
-		FDC779DE1F610AD100C91D6B /* NSImage+WebCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSImage+WebCache.h"; sourceTree = "<group>"; };
-		FDC779DF1F610AD100C91D6B /* NSImage+WebCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSImage+WebCache.m"; sourceTree = "<group>"; };
-		FDC779E01F610AD100C91D6B /* SDImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDImageCache.h; sourceTree = "<group>"; };
-		FDC779E11F610AD100C91D6B /* SDImageCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDImageCache.m; sourceTree = "<group>"; };
-		FDC779E21F610AD100C91D6B /* SDImageCacheConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDImageCacheConfig.h; sourceTree = "<group>"; };
-		FDC779E31F610AD100C91D6B /* SDImageCacheConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDImageCacheConfig.m; sourceTree = "<group>"; };
-		FDC779E41F610AD100C91D6B /* SDWebImageCompat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImageCompat.h; sourceTree = "<group>"; };
-		FDC779E51F610AD100C91D6B /* SDWebImageCompat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDWebImageCompat.m; sourceTree = "<group>"; };
-		FDC779E61F610AD100C91D6B /* SDWebImageDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImageDecoder.h; sourceTree = "<group>"; };
-		FDC779E71F610AD100C91D6B /* SDWebImageDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDWebImageDecoder.m; sourceTree = "<group>"; };
-		FDC779E81F610AD100C91D6B /* SDWebImageDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImageDownloader.h; sourceTree = "<group>"; };
-		FDC779E91F610AD100C91D6B /* SDWebImageDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDWebImageDownloader.m; sourceTree = "<group>"; };
-		FDC779EA1F610AD100C91D6B /* SDWebImageDownloaderOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImageDownloaderOperation.h; sourceTree = "<group>"; };
-		FDC779EB1F610AD100C91D6B /* SDWebImageDownloaderOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDWebImageDownloaderOperation.m; sourceTree = "<group>"; };
-		FDC779EC1F610AD100C91D6B /* SDWebImageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImageManager.h; sourceTree = "<group>"; };
-		FDC779ED1F610AD100C91D6B /* SDWebImageManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDWebImageManager.m; sourceTree = "<group>"; };
-		FDC779EE1F610AD100C91D6B /* SDWebImageOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImageOperation.h; sourceTree = "<group>"; };
-		FDC779EF1F610AD100C91D6B /* SDWebImagePrefetcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDWebImagePrefetcher.h; sourceTree = "<group>"; };
-		FDC779F01F610AD100C91D6B /* SDWebImagePrefetcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDWebImagePrefetcher.m; sourceTree = "<group>"; };
-		FDC779F11F610AD100C91D6B /* UIButton+WebCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIButton+WebCache.h"; sourceTree = "<group>"; };
-		FDC779F21F610AD100C91D6B /* UIButton+WebCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIButton+WebCache.m"; sourceTree = "<group>"; };
-		FDC779F31F610AD100C91D6B /* UIImage+GIF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+GIF.h"; sourceTree = "<group>"; };
-		FDC779F41F610AD100C91D6B /* UIImage+GIF.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+GIF.m"; sourceTree = "<group>"; };
-		FDC779F51F610AD100C91D6B /* UIImage+MultiFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+MultiFormat.h"; sourceTree = "<group>"; };
-		FDC779F61F610AD100C91D6B /* UIImage+MultiFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MultiFormat.m"; sourceTree = "<group>"; };
-		FDC779F71F610AD100C91D6B /* UIImageView+HighlightedWebCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImageView+HighlightedWebCache.h"; sourceTree = "<group>"; };
-		FDC779F81F610AD100C91D6B /* UIImageView+HighlightedWebCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HighlightedWebCache.m"; sourceTree = "<group>"; };
-		FDC779F91F610AD100C91D6B /* UIImageView+WebCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImageView+WebCache.h"; sourceTree = "<group>"; };
-		FDC779FA1F610AD100C91D6B /* UIImageView+WebCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+WebCache.m"; sourceTree = "<group>"; };
-		FDC779FB1F610AD100C91D6B /* UIView+WebCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+WebCache.h"; sourceTree = "<group>"; };
-		FDC779FC1F610AD100C91D6B /* UIView+WebCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCache.m"; sourceTree = "<group>"; };
-		FDC779FD1F610AD100C91D6B /* UIView+WebCacheOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+WebCacheOperation.h"; sourceTree = "<group>"; };
-		FDC779FE1F610AD100C91D6B /* UIView+WebCacheOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCacheOperation.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E633201003804B966EEFA51C /* libPods-ZLTestPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,15 +90,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2268059A275A83FEB3C6D2F9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BBD104D44C251C0256CE020E /* Pods-ZLTestPods.debug.xcconfig */,
+				7AF91FFC95CF95E4712B16A0 /* Pods-ZLTestPods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		324F874C06CB28CEA70F0F7F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D18952C785999BAAFE1093AF /* libPods-ZLTestPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		FD36424C1F5D348C009210C0 = {
 			isa = PBXGroup;
 			children = (
-				FDC779DB1F610AD100C91D6B /* SDWebImage */,
 				FD36428A1F5D34C3009210C0 /* TestFolder */,
 				FD3642571F5D348C009210C0 /* ZLTestPods */,
 				FD3642701F5D348C009210C0 /* ZLTestPodsTests */,
 				FD36427B1F5D348C009210C0 /* ZLTestPodsUITests */,
 				FD3642561F5D348C009210C0 /* Products */,
+				2268059A275A83FEB3C6D2F9 /* Pods */,
+				324F874C06CB28CEA70F0F7F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -187,48 +175,6 @@
 			path = TestFolder;
 			sourceTree = "<group>";
 		};
-		FDC779DB1F610AD100C91D6B /* SDWebImage */ = {
-			isa = PBXGroup;
-			children = (
-				FDC779DC1F610AD100C91D6B /* NSData+ImageContentType.h */,
-				FDC779DD1F610AD100C91D6B /* NSData+ImageContentType.m */,
-				FDC779DE1F610AD100C91D6B /* NSImage+WebCache.h */,
-				FDC779DF1F610AD100C91D6B /* NSImage+WebCache.m */,
-				FDC779E01F610AD100C91D6B /* SDImageCache.h */,
-				FDC779E11F610AD100C91D6B /* SDImageCache.m */,
-				FDC779E21F610AD100C91D6B /* SDImageCacheConfig.h */,
-				FDC779E31F610AD100C91D6B /* SDImageCacheConfig.m */,
-				FDC779E41F610AD100C91D6B /* SDWebImageCompat.h */,
-				FDC779E51F610AD100C91D6B /* SDWebImageCompat.m */,
-				FDC779E61F610AD100C91D6B /* SDWebImageDecoder.h */,
-				FDC779E71F610AD100C91D6B /* SDWebImageDecoder.m */,
-				FDC779E81F610AD100C91D6B /* SDWebImageDownloader.h */,
-				FDC779E91F610AD100C91D6B /* SDWebImageDownloader.m */,
-				FDC779EA1F610AD100C91D6B /* SDWebImageDownloaderOperation.h */,
-				FDC779EB1F610AD100C91D6B /* SDWebImageDownloaderOperation.m */,
-				FDC779EC1F610AD100C91D6B /* SDWebImageManager.h */,
-				FDC779ED1F610AD100C91D6B /* SDWebImageManager.m */,
-				FDC779EE1F610AD100C91D6B /* SDWebImageOperation.h */,
-				FDC779EF1F610AD100C91D6B /* SDWebImagePrefetcher.h */,
-				FDC779F01F610AD100C91D6B /* SDWebImagePrefetcher.m */,
-				FDC779F11F610AD100C91D6B /* UIButton+WebCache.h */,
-				FDC779F21F610AD100C91D6B /* UIButton+WebCache.m */,
-				FDC779F31F610AD100C91D6B /* UIImage+GIF.h */,
-				FDC779F41F610AD100C91D6B /* UIImage+GIF.m */,
-				FDC779F51F610AD100C91D6B /* UIImage+MultiFormat.h */,
-				FDC779F61F610AD100C91D6B /* UIImage+MultiFormat.m */,
-				FDC779F71F610AD100C91D6B /* UIImageView+HighlightedWebCache.h */,
-				FDC779F81F610AD100C91D6B /* UIImageView+HighlightedWebCache.m */,
-				FDC779F91F610AD100C91D6B /* UIImageView+WebCache.h */,
-				FDC779FA1F610AD100C91D6B /* UIImageView+WebCache.m */,
-				FDC779FB1F610AD100C91D6B /* UIView+WebCache.h */,
-				FDC779FC1F610AD100C91D6B /* UIView+WebCache.m */,
-				FDC779FD1F610AD100C91D6B /* UIView+WebCacheOperation.h */,
-				FDC779FE1F610AD100C91D6B /* UIView+WebCacheOperation.m */,
-			);
-			path = SDWebImage;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -236,9 +182,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FD3642811F5D348C009210C0 /* Build configuration list for PBXNativeTarget "ZLTestPods" */;
 			buildPhases = (
+				B9C5AC1BBD3B969E8B1B5468 /* [CP] Check Pods Manifest.lock */,
 				FD3642511F5D348C009210C0 /* Sources */,
 				FD3642521F5D348C009210C0 /* Frameworks */,
 				FD3642531F5D348C009210C0 /* Resources */,
+				C624BB115CE24BC6BA3DC633 /* [CP] Embed Pods Frameworks */,
+				CB42A6EDC459B11E278C1BE8 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -355,6 +304,57 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B9C5AC1BBD3B969E8B1B5468 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ZLTestPods-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C624BB115CE24BC6BA3DC633 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ZLTestPods/Pods-ZLTestPods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CB42A6EDC459B11E278C1BE8 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ZLTestPods/Pods-ZLTestPods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FD3642511F5D348C009210C0 /* Sources */ = {
@@ -525,6 +525,7 @@
 		};
 		FD3642821F5D348C009210C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BBD104D44C251C0256CE020E /* Pods-ZLTestPods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ZLTestPods/Info.plist;
@@ -537,6 +538,7 @@
 		};
 		FD3642831F5D348C009210C0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AF91FFC95CF95E4712B16A0 /* Pods-ZLTestPods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ZLTestPods/Info.plist;
