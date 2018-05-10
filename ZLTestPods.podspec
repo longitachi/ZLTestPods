@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'ZLTestPods'
-  s.version      = '0.1.5'
+  s.version      = '0.1.6'
   s.summary      = 'test dependency'
   s.homepage     = 'https://github.com/longitachi/ZLTestPods'
   s.license      = 'MIT'
@@ -10,5 +10,6 @@ Pod::Spec.new do |s|
   s.source       = {:git => 'https://github.com/longitachi/ZLTestPods.git', :tag => s.version}
   s.source_files = 'TestFolder/*.{h,m}'
   s.dependency 'SDWebImage'
+  s.dependency 'GPUImage'
   s.requires_arc = true
 end
