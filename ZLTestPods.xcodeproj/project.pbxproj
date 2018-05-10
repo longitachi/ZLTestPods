@@ -19,6 +19,7 @@
 		FD3642721F5D348C009210C0 /* ZLTestPodsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FD3642711F5D348C009210C0 /* ZLTestPodsTests.m */; };
 		FD36427D1F5D348C009210C0 /* ZLTestPodsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = FD36427C1F5D348C009210C0 /* ZLTestPodsUITests.m */; };
 		FDC779FF1F610B5E00C91D6B /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD36428C1F5D34C3009210C0 /* TestViewController.m */; };
+		FDF2BDA120A4947100A01C0B /* TestClass.m in Sources */ = {isa = PBXBuildFile; fileRef = FDF2BDA020A4947100A01C0B /* TestClass.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,8 @@
 		FD36427E1F5D348C009210C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FD36428B1F5D34C3009210C0 /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
 		FD36428C1F5D34C3009210C0 /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
+		FDF2BD9F20A4947100A01C0B /* TestClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestClass.h; sourceTree = "<group>"; };
+		FDF2BDA020A4947100A01C0B /* TestClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestClass.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,10 +172,20 @@
 		FD36428A1F5D34C3009210C0 /* TestFolder */ = {
 			isa = PBXGroup;
 			children = (
+				FDF2BD9E20A4946700A01C0B /* InnerFloder */,
 				FD36428B1F5D34C3009210C0 /* TestViewController.h */,
 				FD36428C1F5D34C3009210C0 /* TestViewController.m */,
 			);
 			path = TestFolder;
+			sourceTree = "<group>";
+		};
+		FDF2BD9E20A4946700A01C0B /* InnerFloder */ = {
+			isa = PBXGroup;
+			children = (
+				FDF2BD9F20A4947100A01C0B /* TestClass.h */,
+				FDF2BDA020A4947100A01C0B /* TestClass.m */,
+			);
+			path = InnerFloder;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -345,9 +358,22 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ZLTestPods/Pods-ZLTestPods-resources.sh",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/btn_original_circle.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/btn_original_circle@2x.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/btn_original_circle@3x.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/btn_selected.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/btn_selected@2x.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/btn_selected@3x.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/defaultphoto.png",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/ZLPhotoActionSheet.xib",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/ZLPhotoBrowserCell.xib",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/ZLThumbnailViewController.xib",
+				"${PODS_ROOT}/ZLPhotoBrowser/PhotoBrowser/resource/ZLPhotoBrowser.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -361,6 +387,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDF2BDA120A4947100A01C0B /* TestClass.m in Sources */,
 				FD36425D1F5D348C009210C0 /* ViewController.m in Sources */,
 				FD3642681F5D348C009210C0 /* main.m in Sources */,
 				FDC779FF1F610B5E00C91D6B /* TestViewController.m in Sources */,
