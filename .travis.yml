@@ -1,0 +1,16 @@
+language: objective-c
+osx_image: xcode9.3
+xcode_workspace: ZLTestPods
+xcode_scheme: ZLTestPods
+xcode_sdk: iphonesimulator11.3
+before_install:
+  - xcodebuild -showsdks
+  - brew update
+  - brew outdated carthage || brew upgrade carthage
+before_script:
+  - carthage bootstrap
+before_deploy:
+  - carthage build --no-skip-current
+  - carthage archive $FRAMEWORK_NAME
+script:
+    - xcodebuild clean build -sdk iphonesimulator11.3 -workspace ZLTestPods.xcworkspace -scheme ZLTestPods CODE_SIGNING_REQUIRED=NO

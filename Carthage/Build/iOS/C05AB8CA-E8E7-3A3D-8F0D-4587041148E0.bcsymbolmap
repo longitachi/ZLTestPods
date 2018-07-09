@@ -1,0 +1,8 @@
+BCSymbolMap Version: 2.0
+Apple LLVM version 9.1.0 (clang-902.0.39.1)
+/Users/long/Desktop/未命名文件夹/ZLTestPods/ZLTestPods/TestFolder/InnerFloder/TestClass.m
+/Users/long/Desktop/未命名文件夹/ZLTestPods
+-[TestViewController viewDidLoad]
+-[TestViewController didReceiveMemoryWarning]
+/Users/long/Desktop/未命名文件夹/ZLTestPods/ZLTestPods/TestFolder/TestViewController.m
+/Users/long/Library/Developer/Xcode/DerivedData/ZLTestPods-cpwijputynuusabmefpmdktrxejq/Build/Intermediates.noindex/ArchiveIntermediates/ZLTestPods/IntermediateBuildFilesPath/ZLTestPods.build/Release-iphoneos/ZLTestPods.build/DerivedSources/ZLTestPods_vers.c

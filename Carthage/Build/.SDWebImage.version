@@ -1,0 +1,18 @@
+{
+  "Mac" : [
+
+  ],
+  "watchOS" : [
+
+  ],
+  "tvOS" : [
+
+  ],
+  "commitish" : "4.4.1",
+  "iOS" : [
+    {
+      "name" : "SDWebImage",
+      "hash" : "9246892d041019d74b713c17210d4241b1089ad0622fff31f250c186000f0ae9"
+    }
+  ]
+}
