@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'ZLTestPods'
-  s.version      = '0.1.9'
+  s.version      = '0.2.0'
   s.summary      = 'test dependency'
   s.homepage     = 'https://github.com/longitachi/ZLTestPods'
   s.license      = 'MIT'
@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '9.0'
   s.source       = {:git => 'https://github.com/longitachi/ZLTestPods.git', :tag => s.version}
   s.source_files = 'ZLTestPods/TestFolder/**/*.{h,m}'
+  s.resources    = 'ZLTestPods/TestFolder/*.{png,xib,nib,bundle}'
   s.dependency 'SDWebImage'
   s.requires_arc = true
 end

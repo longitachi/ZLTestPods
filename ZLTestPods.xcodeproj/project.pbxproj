@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FD4BA600212A7351009C3F4C /* TestBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FD4BA5FF212A7351009C3F4C /* TestBundle.bundle */; };
 		FDFEFEE920F0B92600CEE0CE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFEFEE820F0B92600CEE0CE /* AppDelegate.m */; };
 		FDFEFEEC20F0B92600CEE0CE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFEFEEB20F0B92600CEE0CE /* ViewController.m */; };
 		FDFEFEEF20F0B92600CEE0CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FDFEFEED20F0B92600CEE0CE /* Main.storyboard */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FD4BA5FF212A7351009C3F4C /* TestBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TestBundle.bundle; sourceTree = "<group>"; };
 		FDFEFED620F0B91000CEE0CE /* ZLTestPods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZLTestPods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDFEFEDA20F0B91000CEE0CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FDFEFEE520F0B92600CEE0CE /* ZLTestPodsDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZLTestPodsDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +119,7 @@
 				FDFEFF0120F0C06600CEE0CE /* InnerFloder */,
 				FDFEFF0420F0C06600CEE0CE /* TestViewController.h */,
 				FDFEFF0020F0C06600CEE0CE /* TestViewController.m */,
+				FD4BA5FF212A7351009C3F4C /* TestBundle.bundle */,
 			);
 			path = TestFolder;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD4BA600212A7351009C3F4C /* TestBundle.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
