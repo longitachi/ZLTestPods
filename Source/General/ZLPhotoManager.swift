@@ -20,10 +20,10 @@ public class ZLPhotoManager: NSObject {
         }
         
         var placeholderAsset: PHObjectPlaceholder? = nil
-        PHPhotoLibrary.shared().performChanges {
+        PHPhotoLibrary.shared().performChanges({
             let newAssetRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
             placeholderAsset = newAssetRequest.placeholderForCreatedAsset
-        } completionHandler: { (suc, error) in
+        }) { (suc, error) in
             DispatchQueue.main.async {
                 if suc {
                     let asset = self.getAsset(from: placeholderAsset?.localIdentifier)
@@ -45,10 +45,10 @@ public class ZLPhotoManager: NSObject {
         }
         
         var placeholderAsset: PHObjectPlaceholder? = nil
-        PHPhotoLibrary.shared().performChanges {
+        PHPhotoLibrary.shared().performChanges({
             let newAssetRequest = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
             placeholderAsset = newAssetRequest?.placeholderForCreatedAsset
-        } completionHandler: { (suc, error) in
+        }) { (suc, error) in
             DispatchQueue.main.async {
                 if suc {
                     let asset = self.getAsset(from: placeholderAsset?.localIdentifier)

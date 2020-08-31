@@ -592,9 +592,9 @@ public class ZLCustomCamera: UIViewController, CAAnimationDelegate {
         self.focusCursorView.layer.removeAllAnimations()
         self.focusCursorView.alpha = 1
         self.focusCursorView.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1)
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.5, animations: {
             self.focusCursorView.layer.transform = CATransform3DIdentity
-        } completion: { (_) in
+        }) { (_) in
             self.focusCursorView.alpha = 0
         }
         // ui坐标转换为摄像头坐标
@@ -696,10 +696,10 @@ public class ZLCustomCamera: UIViewController, CAAnimationDelegate {
     }
     
     func startRecordAnimation() {
-        UIView.animate(withDuration: 0.1) {
+        UIView.animate(withDuration: 0.1, animations: {
             self.largeCircleView.layer.transform = CATransform3DScale(CATransform3DIdentity, ZLCustomCamera.Layout.largeCircleRecordScale, ZLCustomCamera.Layout.largeCircleRecordScale, 1)
             self.smallCircleView.layer.transform = CATransform3DScale(CATransform3DIdentity, ZLCustomCamera.Layout.smallCircleRecordScale, ZLCustomCamera.Layout.smallCircleRecordScale, 1)
-        } completion: { (_) in
+        }) { (_) in
             self.largeCircleView.layer.addSublayer(self.animateLayer)
             let animation = CABasicAnimation(keyPath: "strokeEnd")
             animation.fromValue = 0

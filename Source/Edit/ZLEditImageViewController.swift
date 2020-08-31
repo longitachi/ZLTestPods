@@ -280,9 +280,9 @@ public class ZLEditImageViewController: UIViewController {
             self.view.insertSubview(animateImageView, aboveSubview: self.scrollView)
             let to = self.view.convert(self.containerView.frame, from: self.scrollView)
             self.scrollView.alpha = 0
-            UIView.animate(withDuration: 0.3) {
+            UIView.animate(withDuration: 0.3, animations: {
                 animateImageView.frame = to
-            } completion: { (_) in
+            }) { (_) in
                 self.scrollView.alpha = 1
                 animateImageView.removeFromSuperview()
             }

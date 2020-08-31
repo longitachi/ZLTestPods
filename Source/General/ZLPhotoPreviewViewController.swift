@@ -448,9 +448,9 @@ class ZLPhotoPreviewViewController: UIViewController {
         guard let index = self.arrDataSources.lastIndex(of: model) else {
             return
         }
-        self.collectionView.performBatchUpdates {
+        self.collectionView.performBatchUpdates({
             self.collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: false)
-        } completion: { (_) in
+        }) { (_) in
             self.indexBeforOrientationChanged = self.currentIndex
             self.reloadCurrentCell()
         }
@@ -699,9 +699,9 @@ class ZLPhotoPreviewSelectedView: UIView, UICollectionViewDataSource, UICollecti
         self.currentShowModel = model
         
         if let index = self.arrSelectedModels.firstIndex(where: { $0 == self.currentShowModel }) {
-            self.collectionView.performBatchUpdates {
+            self.collectionView.performBatchUpdates({
                 self.collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: true)
-            } completion: { (_) in
+            }) { (_) in
                 self.collectionView.reloadItems(at: self.collectionView.indexPathsForVisibleItems)
             }
         } else {
@@ -712,9 +712,9 @@ class ZLPhotoPreviewSelectedView: UIView, UICollectionViewDataSource, UICollecti
     func addSelModel(model: ZLPhotoModel) {
         self.arrSelectedModels.append(model)
         let ip = IndexPath(row: self.arrSelectedModels.count-1, section: 0)
-        self.collectionView.performBatchUpdates {
+        self.collectionView.performBatchUpdates({
             self.collectionView.insertItems(at: [ip])
-        } completion: { (_) in
+        }) { (_) in
             self.collectionView.scrollToItem(at: ip, at: .centeredHorizontally, animated: true)
         }
     }
@@ -724,11 +724,9 @@ class ZLPhotoPreviewSelectedView: UIView, UICollectionViewDataSource, UICollecti
             return
         }
         self.arrSelectedModels.remove(at: index)
-        self.collectionView.performBatchUpdates {
+        self.collectionView.performBatchUpdates({
             self.collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
-        } completion: { (_) in
-            
-        }
+        }, completion: nil)
     }
     
     func refreshCell(for model: ZLPhotoModel) {
@@ -841,9 +839,9 @@ class ZLPhotoPreviewSelectedView: UIView, UICollectionViewDataSource, UICollecti
         }
         let m = self.arrSelectedModels[indexPath.row]
         self.currentShowModel = m
-        self.collectionView.performBatchUpdates {
+        self.collectionView.performBatchUpdates({
             self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-        } completion: { (_) in
+        }) { (_) in
             self.collectionView.reloadItems(at: self.collectionView.indexPathsForVisibleItems)
         }
         self.selectBlock?(m)

@@ -544,9 +544,9 @@ class ZLThumbnailViewController: UIViewController {
         }
         
         let insertIndexPath = IndexPath(row: insertIndex, section: 0)
-        self.collectionView.performBatchUpdates {
+        self.collectionView.performBatchUpdates({
             self.collectionView.insertItems(at: [insertIndexPath])
-        } completion: { (_) in
+        }) { (_) in
             self.collectionView.scrollToItem(at: insertIndexPath, at: .centeredVertically, animated: true)
             self.collectionView.reloadItems(at: self.collectionView.indexPathsForVisibleItems)
         }

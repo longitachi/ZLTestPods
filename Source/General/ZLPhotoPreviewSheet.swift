@@ -322,10 +322,10 @@ public class ZLPhotoPreviewSheet: UIView {
             
             var frame = self.baseView.frame
             frame.origin.y += self.baseViewHeight
-            UIView.animate(withDuration: 0.2) {
+            UIView.animate(withDuration: 0.2, animations: {
                 self.backgroundColor = UIColor.previewBgColor.withAlphaComponent(0)
                 self.baseView.frame = frame
-            } completion: { (_) in
+            }) { (_) in
                 self.isHidden = true
                 self.removeFromSuperview()
             }
@@ -447,9 +447,9 @@ public class ZLPhotoPreviewSheet: UIView {
             self.panModel = nil
             if !callBack {
                 let toRect = self.convert(self.panCell?.frame ?? .zero, from: self.collectionView)
-                UIView.animate(withDuration: 0.25) {
+                UIView.animate(withDuration: 0.25, animations: {
                     self.panImageView?.frame = toRect
-                } completion: { (_) in
+                }) { (_) in
                     self.panCell?.imageView.image = self.panImageView?.image
                     self.panCell = nil
                     self.panImageView?.removeFromSuperview()
@@ -610,9 +610,9 @@ public class ZLPhotoPreviewSheet: UIView {
         }
         
         let insertIndexPath = IndexPath(row: 0, section: 0)
-        self.collectionView.performBatchUpdates {
+        self.collectionView.performBatchUpdates({
             self.collectionView.insertItems(at: [insertIndexPath])
-        } completion: { (_) in
+        }) { (_) in
             self.collectionView.scrollToItem(at: insertIndexPath, at: .centeredHorizontally, animated: true)
             self.collectionView.reloadItems(at: self.collectionView.indexPathsForVisibleItems)
         }

@@ -342,11 +342,9 @@ public class ZLEditVideoViewController: UIViewController {
         self.indicator.frame = CGRect(x: self.leftSideView.frame.minX, y: self.leftSideView.frame.minY, width: 2, height: self.leftSideView.frame.height)
         self.indicator.layer.removeAllAnimations()
         
-        UIView.animate(withDuration: duration, delay: 0, options: [.allowUserInteraction, .curveLinear, .repeat]) {
+        UIView.animate(withDuration: duration, delay: 0, options: [.allowUserInteraction, .curveLinear, .repeat], animations: {
             self.indicator.frame = CGRect(x: self.rightSideView.frame.maxX-2, y: self.rightSideView.frame.minY, width: 2, height: self.rightSideView.frame.height)
-        } completion: { (_) in
-            
-        }
+        }, completion: nil)
     }
     
     func cleanTimer() {

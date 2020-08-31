@@ -139,11 +139,11 @@ class ZLClipImageViewController: UIViewController {
             self.bottomToolView.alpha = 0
             self.rotateBtn.alpha = 0
             let toRect = self.view.convert(self.containerView.frame, from: self.scrollView)
-            UIView.animate(withDuration: 0.25) {
+            UIView.animate(withDuration: 0.25, animations: {
                 animateImageView.frame = toRect
                 self.bottomToolView.alpha = 1
                 self.rotateBtn.alpha = 1
-            } completion: { (_) in
+            }) { (_) in
                 animateImageView.removeFromSuperview()
                 self.scrollView.alpha = 1
                 self.overlayView.alpha = 1
@@ -390,10 +390,10 @@ class ZLClipImageViewController: UIViewController {
         
         self.overlayView.alpha = 0
         self.containerView.alpha = 0
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             animateImageView.transform = transform
             animateImageView.frame = toFrame
-        } completion: { (_) in
+        }) { (_) in
             animateImageView.removeFromSuperview()
             self.overlayView.alpha = 1
             self.containerView.alpha = 1
@@ -604,7 +604,6 @@ class ZLClipImageViewController: UIViewController {
             self.rotateBtn.alpha = 1
             self.shadowView.alpha = 1
             self.changeClipBoxFrame(newFrame: clipRect)
-        } completion: { (_) in
         }
     }
     
