@@ -42,7 +42,6 @@
 
 /* Begin PBXFileReference section */
 		E417AC0124F63E7E00EDDCD2 /* ZLEditImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLEditImageViewController.swift; sourceTree = "<group>"; };
-		E43EFA0524EFBE6C007067EC /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E43EFA0B24F13747007067EC /* UIImage+ZLPhotoBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+ZLPhotoBrowser.swift"; sourceTree = "<group>"; };
 		E462465924EB9ABF00EF6C57 /* ZLFetchImageOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLFetchImageOperation.swift; sourceTree = "<group>"; };
 		E462465D24EBE45000EF6C57 /* ZLImageNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLImageNavController.swift; sourceTree = "<group>"; };
@@ -91,7 +90,6 @@
 		E43EFA0424EFBE6C007067EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E43EFA0524EFBE6C007067EC /* Kingfisher.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
