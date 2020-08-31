@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name          = 'ZLTestPods'
-  s.version       = '0.2.4'
+  s.version       = '0.2.5'
   s.summary       = 'test dependency'
   s.homepage      = 'https://github.com/longitachi/ZLTestPods'
   s.license       = { :type => "MIT", :file => "LICENSE" }
