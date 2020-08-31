@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.swift_versions = ['5.0', '5.1', '5.2']
 
   s.source_files  = ["Sources/**/*.swift", "Sources/ZLPhotoBrowser.h"]
-  s.resources     = 'Source/*.{png,bundle}'
+  s.resources     = 'Sources/*.{png,bundle}'
 
   s.requires_arc  = true
   s.frameworks    = 'UIKit','Photos','PhotosUI','AVFoundation','CoreMotion'
