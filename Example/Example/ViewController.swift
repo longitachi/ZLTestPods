@@ -24,8 +24,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        FLEXManager.shared()?.showExplorer()
-        
         self.title = "主界面"
         self.view.backgroundColor = .white
         

@@ -124,6 +124,8 @@ class PhotoConfigureViewController: UIViewController {
         let dismissBtn = UIButton(type: .custom)
         dismissBtn.setTitle("完成", for: .normal)
         dismissBtn.addTarget(self, action: #selector(dismissBtnClick), for: .touchUpInside)
+        dismissBtn.layer.cornerRadius = 5
+        dismissBtn.layer.masksToBounds = true
         dismissBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         dismissBtn.backgroundColor = .black
         if #available(iOS 13.0, *) {

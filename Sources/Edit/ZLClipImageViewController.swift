@@ -589,7 +589,6 @@ class ZLClipImageViewController: UIViewController {
         var offset = CGPoint(x: contentTargetPoint.x - midPoint.x, y: contentTargetPoint.y - midPoint.y)
         offset.x = max(-clipRect.minX, offset.x)
         offset.y = max(-clipRect.minY, offset.y)
-        
         UIView.animate(withDuration: 0.3) {
             if scale < 1 - CGFloat.ulpOfOne || scale > 1 + CGFloat.ulpOfOne {
                 self.scrollView.zoomScale *= scale

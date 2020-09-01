@@ -261,6 +261,8 @@ extension UIImage {
             bnds = swapRectWidthAndHeight(bnds)
             transform = transform.scaledBy(x: -1, y: 1)
             transform = transform.rotated(by: CGFloat.pi / 2)
+        @unknown default:
+            break
         }
         
         /**
