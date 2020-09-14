@@ -17,7 +17,8 @@ func getImage(_ named: String) -> UIImage? {
     if ZLCustomImageDeply.deploy.contains(named) {
         return UIImage(named: named)
     }
-    return UIImage(named: "ZLPhotoBrowser.bundle/" + named) ?? UIImage(named: "Frameworks/ZLPhotoBrowser.framework/ZLPhotoBrowser.bundle/" + named)
+    return UIImage(named: named, in: Bundle.zlPhotoBrowserBundle, compatibleWith: nil)
+    //UIImage(named: "ZLPhotoBrowser.bundle/" + named) ?? UIImage(named: "Frameworks/ZLPhotoBrowser.framework/ZLPhotoBrowser.bundle/" + named)
 }
 
 func getFont(_ size: CGFloat) -> UIFont {
