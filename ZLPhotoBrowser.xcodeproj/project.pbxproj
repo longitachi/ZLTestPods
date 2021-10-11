@@ -119,22 +119,13 @@
 			isa = PBXGroup;
 			children = (
 				E4C911C424E284B30061DA40 /* Info.plist */,
-				E4C911C324E284B30061DA40 /* ZLPhotoBrowser.h */,
 				E49BD1F824E3D332005D7DFB /* ZLPhotoBrowser.bundle */,
 				E4C911CD24E286C30061DA40 /* General */,
 				E4C911CF24E287700061DA40 /* Edit */,
 				E4C911CE24E287680061DA40 /* Camera */,
 				E4C911CC24E286B90061DA40 /* Extensions */,
-				E4C911CB24E286530061DA40 /* Animation */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		E4C911CB24E286530061DA40 /* Animation */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Animation;
 			sourceTree = "<group>";
 		};
 		E4C911CC24E286B90061DA40 /* Extensions */ = {
@@ -153,6 +144,7 @@
 		E4C911CD24E286C30061DA40 /* General */ = {
 			isa = PBXGroup;
 			children = (
+				E4C911C324E284B30061DA40 /* ZLPhotoBrowser.h */,
 				E4FB6AEE250F3228003FA058 /* ZLTestPods.swift */,
 				E4C911D724E298B80061DA40 /* ZLGeneralDefine.swift */,
 				E4CF57EF24EA923C00BEBFC6 /* ZLLanguageDefine.swift */,
