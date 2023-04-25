@@ -7,8 +7,9 @@
 [![Usage](https://img.shields.io/badge/Usage-Doc-yarn?style=flat)](https://github.com/longitachi/ZLPhotoBrowser/wiki/How-to-use-(Swift))
 
 # ZLTestPods
-just for test
+Just for test.
 
+- - -
 ![image](https://github.com/longitachi/ZLTestPods/blob/master/效果图/build.png)
 
 ![image](https://github.com/longitachi/ZLTestPods/blob/master/效果图/update.png)
