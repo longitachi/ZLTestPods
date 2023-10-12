@@ -4,428 +4,497 @@
 //
 //  Created by long on 2020/8/30.
 //
+//  Copyright (c) 2020 Long Zhang <495181165@qq.com>
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 
 import UIKit
 import Photos
 
 public class ZLEditVideoViewController: UIViewController {
-
-    static let frameImageSize = CGSize(width: 50.0 * 2.0 / 3.0, height: 50.0)
+    private static let frameImageSize = CGSize(width: CGFloat(round(50.0 * 2.0 / 3.0)), height: 50.0)
     
-    let asset: PHAsset
+    private let avAsset: AVAsset
     
-    var avAsset: AVAsset?
+    private let animateDismiss: Bool
     
-    var cancelBtn: UIButton!
-    
-    var doneBtn: UIButton!
-    
-    var timer: Timer?
-    
-    var playerLayer: AVPlayerLayer!
-    
-    var collectionView: UICollectionView!
-    
-    var frameImageBorderView: ZLEditVideoFrameImageBorderView!
-    
-    var leftSideView: UIImageView!
-    
-    var rightSideView: UIImageView!
-    
-    var leftSidePan: UIPanGestureRecognizer!
-    
-    var rightSidePan: UIPanGestureRecognizer!
-    
-    var indicator: UIView!
-    
-    var measureCount = 0
-    
-    let interval: TimeInterval = TimeInterval(ZLPhotoConfiguration.default().maxEditVideoTime) / 10
-    
-    var requestFrameImageQueue: OperationQueue!
-    
-    var avAssetRequestID = PHInvalidImageRequestID
-    
-    var videoRequestID = PHInvalidImageRequestID
-    
-    var frameImageCache: [IndexPath: UIImage] = [:]
-    
-    var shouldLayout = true
-    
-    lazy var generator: AVAssetImageGenerator? = {
-        if let avAsset = self.avAsset {
-            let g = AVAssetImageGenerator(asset: avAsset)
-            g.maximumSize = CGSize(width: ZLEditVideoViewController.frameImageSize.width * 2, height: ZLEditVideoViewController.frameImageSize.height * 2)
-            g.appliesPreferredTrackTransform = true
-            g.requestedTimeToleranceBefore = .zero
-            g.requestedTimeToleranceAfter = .zero
-            g.apertureMode = .productionAperture
-            return g
-        }
-        return nil
+    private lazy var cancelBtn: UIButton = {
+        let btn = UIButton(type: .custom)
+        btn.setTitle(localLanguageTextValue(.cancel), for: .normal)
+        btn.setTitleColor(.zl.bottomToolViewBtnNormalTitleColor, for: .normal)
+        btn.titleLabel?.font = ZLLayout.bottomToolTitleFont
+        btn.addTarget(self, action: #selector(cancelBtnClick), for: .touchUpInside)
+        return btn
     }()
     
-    public var editFinishBlock: ( (PHAsset) -> Void )?
+    private lazy var doneBtn: UIButton = {
+        let btn = UIButton(type: .custom)
+        btn.setTitle(localLanguageTextValue(.done), for: .normal)
+        btn.setTitleColor(.zl.bottomToolViewBtnNormalTitleColor, for: .normal)
+        btn.titleLabel?.font = ZLLayout.bottomToolTitleFont
+        btn.addTarget(self, action: #selector(doneBtnClick), for: .touchUpInside)
+        btn.backgroundColor = .zl.bottomToolViewBtnNormalBgColor
+        btn.layer.masksToBounds = true
+        btn.layer.cornerRadius = ZLLayout.bottomToolBtnCornerRadius
+        return btn
+    }()
     
-    public override var prefersStatusBarHidden: Bool {
-        return true
-    }
+    private var timer: Timer?
     
-    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
+    private lazy var playerLayer: AVPlayerLayer = {
+        let layer = AVPlayerLayer()
+        layer.videoGravity = .resizeAspect
+        return layer
+    }()
     
-    deinit {
-        debugPrint("ZLEditVideoViewController deinit")
-        self.cleanTimer()
-        if self.avAssetRequestID > PHInvalidImageRequestID {
-            PHImageManager.default().cancelImageRequest(self.avAssetRequestID)
-        }
-        if self.videoRequestID > PHInvalidImageRequestID {
-            PHImageManager.default().cancelImageRequest(self.videoRequestID)
-        }
-    }
-    
-    public init(asset: PHAsset) {
-        self.asset = asset
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-
-        self.setupUI()
-        
-        self.requestFrameImageQueue = OperationQueue()
-        self.requestFrameImageQueue.maxConcurrentOperationCount = 5
-    }
-    
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.analysisAssetImages()
-    }
-    
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        guard self.shouldLayout else {
-            return
-        }
-        self.shouldLayout = false
-        
-        debugPrint("edit video layout subviews")
-        var insets = UIEdgeInsets.zero
-        if #available(iOS 11.0, *) {
-            insets = self.view.safeAreaInsets
-        }
-        
-        let btnH = ZLThumbnailViewController.Layout.bottomToolBtnH
-        let bottomBtnAndColSpacing: CGFloat = 20
-        let playerLayerY = insets.top + 20
-        let diffBottom = btnH + ZLEditVideoViewController.frameImageSize.height + bottomBtnAndColSpacing + insets.bottom + 30
-        
-        self.playerLayer.frame = CGRect(x: 15, y: insets.top + 20, width: self.view.bounds.width - 30, height: self.view.bounds.height - playerLayerY - diffBottom)
-        
-        let cancelBtnW = localLanguageTextValue(.previewCancel).boundingRect(font: ZLThumbnailViewController.Layout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: btnH)).width
-        self.cancelBtn.frame = CGRect(x: 20, y: self.view.bounds.height - insets.bottom - btnH, width: cancelBtnW, height: btnH)
-        let doneBtnW = localLanguageTextValue(.done).boundingRect(font: ZLThumbnailViewController.Layout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: btnH)).width + 20
-        self.doneBtn.frame = CGRect(x: self.view.bounds.width-doneBtnW-20, y: self.view.bounds.height - insets.bottom - btnH, width: doneBtnW, height: btnH)
-        
-        self.collectionView.frame = CGRect(x: 0, y: self.doneBtn.frame.minY - bottomBtnAndColSpacing - ZLEditVideoViewController.frameImageSize.height, width: self.view.bounds.width, height: ZLEditVideoViewController.frameImageSize.height)
-        
-        let frameViewW = ZLEditVideoViewController.frameImageSize.width * 10
-        self.frameImageBorderView.frame = CGRect(x: (self.view.bounds.width - frameViewW)/2, y: self.collectionView.frame.minY, width: frameViewW, height: ZLEditVideoViewController.frameImageSize.height)
-        // 左右拖动view
-        let leftRightSideViewW = ZLEditVideoViewController.frameImageSize.width/2
-        self.leftSideView.frame = CGRect(x: self.frameImageBorderView.frame.minX, y: self.collectionView.frame.minY, width: leftRightSideViewW, height: ZLEditVideoViewController.frameImageSize.height)
-        let rightSideViewX = self.view.bounds.width - self.frameImageBorderView.frame.minX - leftRightSideViewW
-        self.rightSideView.frame = CGRect(x: rightSideViewX, y: self.collectionView.frame.minY, width: leftRightSideViewW, height: ZLEditVideoViewController.frameImageSize.height)
-        
-        self.frameImageBorderView.validRect = self.frameImageBorderView.convert(self.clipRect(), from: self.view)
-    }
-    
-    func setupUI() {
-        self.view.backgroundColor = .black
-        
-        self.playerLayer = AVPlayerLayer()
-        self.playerLayer.videoGravity = .resizeAspect
-        self.view.layer.addSublayer(self.playerLayer)
-        
-        let layout = UICollectionViewFlowLayout()
+    private lazy var collectionView: UICollectionView = {
+        let layout = ZLCollectionViewFlowLayout()
         layout.itemSize = ZLEditVideoViewController.frameImageSize
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         layout.scrollDirection = .horizontal
-        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        self.collectionView.delegate = self
-        self.collectionView.dataSource = self
-        self.collectionView.showsHorizontalScrollIndicator = false
-        self.view.addSubview(self.collectionView)
         
-        ZLEditVideoFrameImageCell.zl_register(self.collectionView)
-        
-        self.frameImageBorderView = ZLEditVideoFrameImageBorderView()
-        self.frameImageBorderView.isUserInteractionEnabled = false
-        self.view.addSubview(self.frameImageBorderView)
-        
-        self.indicator = UIView()
-        self.indicator.backgroundColor = .white
-        self.view.addSubview(self.indicator)
-        
-        self.leftSideView = UIImageView(image: getImage("zl_ic_left"))
-        self.leftSideView.isUserInteractionEnabled = true
-        self.view.addSubview(self.leftSideView)
-        
-        self.leftSidePan = UIPanGestureRecognizer(target: self, action: #selector(leftSidePanAction(_:)))
-        self.leftSidePan.delegate = self
-        self.leftSideView.addGestureRecognizer(self.leftSidePan)
-        
-        self.rightSideView = UIImageView(image: getImage("zl_ic_right"))
-        self.rightSideView.isUserInteractionEnabled = true
-        self.view.addSubview(self.rightSideView)
-        
-        self.rightSidePan = UIPanGestureRecognizer(target: self, action: #selector(rightSidePanAction(_:)))
-        self.rightSidePan.delegate = self
-        self.rightSideView.addGestureRecognizer(self.rightSidePan)
-        
-        self.rightSidePan.require(toFail: self.leftSidePan)
-        
-        self.cancelBtn = UIButton(type: .custom)
-        self.cancelBtn.setTitle(localLanguageTextValue(.previewCancel), for: .normal)
-        self.cancelBtn.setTitleColor(.bottomToolViewBtnNormalTitleColor, for: .normal)
-        self.cancelBtn.titleLabel?.font = ZLThumbnailViewController.Layout.bottomToolTitleFont
-        self.cancelBtn.addTarget(self, action: #selector(cancelBtnClick), for: .touchUpInside)
-        self.view.addSubview(self.cancelBtn)
-        
-        self.doneBtn = UIButton(type: .custom)
-        self.doneBtn.setTitle(localLanguageTextValue(.done), for: .normal)
-        self.doneBtn.setTitleColor(.bottomToolViewBtnNormalTitleColor, for: .normal)
-        self.doneBtn.titleLabel?.font = ZLThumbnailViewController.Layout.bottomToolTitleFont
-        self.doneBtn.addTarget(self, action: #selector(doneBtnClick), for: .touchUpInside)
-        self.doneBtn.backgroundColor = .bottomToolViewBtnNormalBgColor
-        self.doneBtn.layer.masksToBounds = true
-        self.doneBtn.layer.cornerRadius = 5
-        self.view.addSubview(self.doneBtn)
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.backgroundColor = .clear
+        view.delegate = self
+        view.dataSource = self
+        view.showsHorizontalScrollIndicator = false
+        ZLEditVideoFrameImageCell.zl.register(view)
+        return view
+    }()
+    
+    private lazy var frameImageBorderView: ZLEditVideoFrameImageBorderView = {
+        let view = ZLEditVideoFrameImageBorderView()
+        view.isUserInteractionEnabled = false
+        return view
+    }()
+    
+    private lazy var leftSideView: UIImageView = {
+        let view = UIImageView(image: .zl.getImage("zl_ic_left"))
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
+    private lazy var rightSideView: UIImageView = {
+        let view = UIImageView(image: .zl.getImage("zl_ic_right"))
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
+    private lazy var leftSidePan: UIPanGestureRecognizer = {
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(leftSidePanAction(_:)))
+        pan.delegate = self
+        return pan
+    }()
+    
+    private lazy var rightSidePan: UIPanGestureRecognizer = {
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(rightSidePanAction(_:)))
+        pan.delegate = self
+        return pan
+    }()
+    
+    private lazy var indicator: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        return view
+    }()
+    
+    private var measureCount = 0
+    
+    private lazy var interval: TimeInterval = {
+        let assetDuration = round(self.avAsset.duration.seconds)
+        return min(assetDuration, TimeInterval(ZLPhotoConfiguration.default().maxEditVideoTime)) / 10
+    }()
+    
+    private lazy var requestFrameImageQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 10
+        return queue
+    }()
+    
+    private lazy var avAssetRequestID = PHInvalidImageRequestID
+    
+    private lazy var videoRequestID = PHInvalidImageRequestID
+    
+    private var frameImageCache: [Int: UIImage] = [:]
+    
+    private var requestFailedFrameImageIndex: [Int] = []
+    
+    private var shouldLayout = true
+    
+    private lazy var generator: AVAssetImageGenerator = {
+        let g = AVAssetImageGenerator(asset: self.avAsset)
+        g.maximumSize = CGSize(width: ZLEditVideoViewController.frameImageSize.width * 3, height: ZLEditVideoViewController.frameImageSize.height * 3)
+        g.appliesPreferredTrackTransform = true
+        g.requestedTimeToleranceBefore = .zero
+        g.requestedTimeToleranceAfter = .zero
+        g.apertureMode = .productionAperture
+        return g
+    }()
+    
+    @objc public var editFinishBlock: ((URL?) -> Void)?
+    
+    override public var prefersStatusBarHidden: Bool {
+        return true
     }
     
-    @objc func cancelBtnClick() {
-        self.cleanTimer()
-        self.dismiss(animated: false, completion: nil)
+    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
     }
     
-    @objc func doneBtnClick() {
-        guard let avAsset = self.avAsset else {
+    deinit {
+        zl_debugPrint("ZLEditVideoViewController deinit")
+        cleanTimer()
+        requestFrameImageQueue.cancelAllOperations()
+        if avAssetRequestID > PHInvalidImageRequestID {
+            PHImageManager.default().cancelImageRequest(avAssetRequestID)
+        }
+        if videoRequestID > PHInvalidImageRequestID {
+            PHImageManager.default().cancelImageRequest(videoRequestID)
+        }
+    }
+    
+    /// initialize
+    /// - Parameters:
+    ///   - avAsset: AVAsset对象，需要传入本地视频，网络视频不支持
+    ///   - animateDismiss: 退出界面时是否显示dismiss动画
+    @objc public init(avAsset: AVAsset, animateDismiss: Bool = false) {
+        self.avAsset = avAsset
+        self.animateDismiss = animateDismiss
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupUI()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analysisAssetImages()
+    }
+    
+    override public func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        guard shouldLayout else {
             return
         }
-        let d = CGFloat(self.interval) * self.clipRect().width / ZLEditVideoViewController.frameImageSize.width
-        if Second(round(d)) < ZLPhotoConfiguration.default().minSelectVideoDuration {
-            let message = String(format: localLanguageTextValue(.shorterThanMaxVideoDuration), ZLPhotoConfiguration.default().minSelectVideoDuration)
+        shouldLayout = false
+        
+        zl_debugPrint("edit video layout subviews")
+        var insets = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+        if #available(iOS 11.0, *) {
+            insets = self.view.safeAreaInsets
+        }
+        
+        let btnH = ZLLayout.bottomToolBtnH
+        let bottomBtnAndColSpacing: CGFloat = 20
+        let playerLayerY = insets.top + 20
+        let diffBottom = btnH + ZLEditVideoViewController.frameImageSize.height + bottomBtnAndColSpacing + insets.bottom + 30
+        
+        playerLayer.frame = CGRect(x: 15, y: insets.top + 20, width: view.bounds.width - 30, height: view.bounds.height - playerLayerY - diffBottom)
+        
+        let cancelBtnW = localLanguageTextValue(.cancel).zl.boundingRect(font: ZLLayout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: btnH)).width
+        cancelBtn.frame = CGRect(x: 20, y: view.bounds.height - insets.bottom - btnH, width: cancelBtnW, height: btnH)
+        let doneBtnW = localLanguageTextValue(.done).zl.boundingRect(font: ZLLayout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: btnH)).width + 20
+        doneBtn.frame = CGRect(x: view.bounds.width - doneBtnW - 20, y: view.bounds.height - insets.bottom - btnH, width: doneBtnW, height: btnH)
+        
+        collectionView.frame = CGRect(x: 0, y: doneBtn.frame.minY - bottomBtnAndColSpacing - ZLEditVideoViewController.frameImageSize.height, width: view.bounds.width, height: ZLEditVideoViewController.frameImageSize.height)
+        
+        let frameViewW = ZLEditVideoViewController.frameImageSize.width * 10
+        frameImageBorderView.frame = CGRect(x: (view.bounds.width - frameViewW) / 2, y: collectionView.frame.minY, width: frameViewW, height: ZLEditVideoViewController.frameImageSize.height)
+        // 左右拖动view
+        let leftRightSideViewW = ZLEditVideoViewController.frameImageSize.width / 2
+        leftSideView.frame = CGRect(x: frameImageBorderView.frame.minX, y: collectionView.frame.minY, width: leftRightSideViewW, height: ZLEditVideoViewController.frameImageSize.height)
+        let rightSideViewX = view.bounds.width - frameImageBorderView.frame.minX - leftRightSideViewW
+        rightSideView.frame = CGRect(x: rightSideViewX, y: collectionView.frame.minY, width: leftRightSideViewW, height: ZLEditVideoViewController.frameImageSize.height)
+        
+        frameImageBorderView.validRect = frameImageBorderView.convert(clipRect(), from: view)
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .black
+        
+        view.layer.addSublayer(playerLayer)
+        view.addSubview(collectionView)
+        view.addSubview(frameImageBorderView)
+        view.addSubview(indicator)
+        view.addSubview(leftSideView)
+        view.addSubview(rightSideView)
+        
+        view.addGestureRecognizer(leftSidePan)
+        view.addGestureRecognizer(rightSidePan)
+        
+        collectionView.panGestureRecognizer.require(toFail: leftSidePan)
+        collectionView.panGestureRecognizer.require(toFail: rightSidePan)
+        rightSidePan.require(toFail: leftSidePan)
+        
+        view.addSubview(cancelBtn)
+        view.addSubview(doneBtn)
+    }
+    
+    @objc private func cancelBtnClick() {
+        dismiss(animated: animateDismiss, completion: nil)
+    }
+    
+    @objc private func doneBtnClick() {
+        cleanTimer()
+        
+        let d = CGFloat(interval) * clipRect().width / ZLEditVideoViewController.frameImageSize.width
+        if ZLPhotoConfiguration.Second(round(d)) < ZLPhotoConfiguration.default().minSelectVideoDuration {
+            let message = String(format: localLanguageTextValue(.shorterThanMinVideoDuration), ZLPhotoConfiguration.default().minSelectVideoDuration)
             showAlertView(message, self)
             return
         }
-        if Second(round(d)) > ZLPhotoConfiguration.default().maxSelectVideoDuration {
+        if ZLPhotoConfiguration.Second(round(d)) > ZLPhotoConfiguration.default().maxSelectVideoDuration {
             let message = String(format: localLanguageTextValue(.longerThanMaxVideoDuration), ZLPhotoConfiguration.default().maxSelectVideoDuration)
             showAlertView(message, self)
             return
         }
-        let hud = ZLProgressHUD(style: ZLPhotoConfiguration.default().hudStyle)
-        hud.show()
         
-        ZLPhotoManager.exportEditVideo(for: avAsset, range: self.getTimeRange()) { [weak self] (url, error) in
+        // Max deviation is 0.01
+        if abs(d - round(CGFloat(avAsset.duration.seconds))) <= 0.01 {
+            dismiss(animated: animateDismiss) {
+                self.editFinishBlock?(nil)
+            }
+            return
+        }
+        
+        let hud = ZLProgressHUD.show(toast: .processing)
+        
+        ZLVideoManager.exportEditVideo(for: avAsset, range: getTimeRange()) { [weak self] url, error in
             hud.hide()
             if let er = error {
                 showAlertView(er.localizedDescription, self)
             } else if url != nil {
-                ZLPhotoManager.saveVideoToAblum(url: url!) { [weak self] (suc, asset) in
-                    if suc, asset != nil {
-                        self?.dismiss(animated: false, completion: {
-                            self?.editFinishBlock?(asset!)
-                        })
-                    } else {
-                        showAlertView(localLanguageTextValue(.saveVideoError), self)
-                    }
+                self?.dismiss(animated: self?.animateDismiss ?? false) {
+                    self?.editFinishBlock?(url)
                 }
             }
         }
     }
     
-    @objc func leftSidePanAction(_ pan: UIPanGestureRecognizer) {
-        let point = pan.location(in: self.view)
+    @objc private func leftSidePanAction(_ pan: UIPanGestureRecognizer) {
+        let point = pan.location(in: view)
         
         if pan.state == .began {
-            self.frameImageBorderView.layer.borderColor = UIColor(white: 1, alpha: 0.4).cgColor
-            self.cleanTimer()
+            frameImageBorderView.layer.borderColor = UIColor(white: 1, alpha: 0.4).cgColor
+            cleanTimer()
         } else if pan.state == .changed {
-            let minX = self.frameImageBorderView.frame.minX
-            let maxX = self.rightSideView.frame.minX
+            let minX = frameImageBorderView.frame.minX
+            let maxX = rightSideView.frame.minX - leftSideView.frame.width
             
-            var frame = self.leftSideView.frame
+            var frame = leftSideView.frame
             frame.origin.x = min(maxX, max(minX, point.x))
-            self.leftSideView.frame = frame
-            self.frameImageBorderView.validRect = self.frameImageBorderView.convert(self.clipRect(), from: self.view)
+            leftSideView.frame = frame
+            frameImageBorderView.validRect = frameImageBorderView.convert(clipRect(), from: view)
             
-            self.playerLayer.player?.seek(to: self.getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
+            playerLayer.player?.seek(to: getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
         } else if pan.state == .ended || pan.state == .cancelled {
-            self.frameImageBorderView.layer.borderColor = UIColor.clear.cgColor
-            self.startTimer()
+            frameImageBorderView.layer.borderColor = UIColor.clear.cgColor
+            startTimer()
         }
     }
     
-    @objc func rightSidePanAction(_ pan: UIPanGestureRecognizer) {
-        let point = pan.location(in: self.view)
+    @objc private func rightSidePanAction(_ pan: UIPanGestureRecognizer) {
+        let point = pan.location(in: view)
         
         if pan.state == .began {
-            self.frameImageBorderView.layer.borderColor = UIColor(white: 1, alpha: 0.4).cgColor
-            self.cleanTimer()
+            frameImageBorderView.layer.borderColor = UIColor(white: 1, alpha: 0.4).cgColor
+            cleanTimer()
         } else if pan.state == .changed {
-            let minX = self.leftSideView.frame.maxX
-            let maxX = self.frameImageBorderView.frame.maxX - self.rightSideView.frame.width
+            let minX = leftSideView.frame.maxX
+            let maxX = frameImageBorderView.frame.maxX - rightSideView.frame.width
             
-            var frame = self.rightSideView.frame
+            var frame = rightSideView.frame
             frame.origin.x = min(maxX, max(minX, point.x))
-            self.rightSideView.frame = frame
-            self.frameImageBorderView.validRect = self.frameImageBorderView.convert(self.clipRect(), from: self.view)
+            rightSideView.frame = frame
+            frameImageBorderView.validRect = frameImageBorderView.convert(clipRect(), from: view)
             
-            self.playerLayer.player?.seek(to: self.getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
+            playerLayer.player?.seek(to: getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
         } else if pan.state == .ended || pan.state == .cancelled {
-            self.frameImageBorderView.layer.borderColor = UIColor.clear.cgColor
-            self.startTimer()
+            frameImageBorderView.layer.borderColor = UIColor.clear.cgColor
+            startTimer()
         }
     }
     
-    func analysisAssetImages() {
-        let duration = round(self.asset.duration)
-        self.measureCount = Int(duration / self.interval)
+    @objc private func appWillResignActive() {
+        cleanTimer()
+        indicator.layer.removeAllAnimations()
+    }
+    
+    @objc private func appDidBecomeActive() {
+        startTimer()
+    }
+    
+    private func analysisAssetImages() {
+        let duration = round(avAsset.duration.seconds)
+        guard duration > 0 else {
+            showFetchFailedAlert()
+            return
+        }
+        let item = AVPlayerItem(asset: avAsset)
+        let player = AVPlayer(playerItem: item)
+        playerLayer.player = player
+        startTimer()
         
-        let hud = ZLProgressHUD(style: ZLPhotoConfiguration.default().hudStyle)
-        hud.show()
-        
-        self.videoRequestID = ZLPhotoManager.fetchVideo(for: self.asset, completion: { [weak self] (item, info, _) in
-            hud.hide()
-            if let item = item {
-                let player = AVPlayer(playerItem: item)
-                self?.playerLayer.player = player
-                self?.startTimer()
-            } else {
-                self?.showFetchFailedAlert()
+        measureCount = Int(duration / interval)
+        collectionView.reloadData()
+        requestVideoMeasureFrameImage()
+    }
+    
+    private func requestVideoMeasureFrameImage() {
+        for i in 0..<measureCount {
+            let mes = TimeInterval(i) * interval
+            let time = CMTimeMakeWithSeconds(Float64(mes), preferredTimescale: avAsset.duration.timescale)
+            
+            let operation = ZLEditVideoFetchFrameImageOperation(generator: generator, time: time) { [weak self] image, _ in
+                self?.frameImageCache[Int(i)] = image
+                let cell = self?.collectionView.cellForItem(at: IndexPath(row: Int(i), section: 0)) as? ZLEditVideoFrameImageCell
+                cell?.imageView.image = image
+                if image == nil {
+                    self?.requestFailedFrameImageIndex.append(i)
+                }
             }
-        })
-        
-        self.avAssetRequestID = ZLPhotoManager.fetchAVAsset(forVideo: self.asset) { [weak self] (avAsset, info) in
-            if let avAsset = avAsset {
-                self?.avAsset = avAsset
-                self?.collectionView.reloadData()
-            } else {
-                self?.showFetchFailedAlert()
-            }
+            requestFrameImageQueue.addOperation(operation)
         }
     }
     
-    func startTimer() {
-        self.cleanTimer()
-        let duration = self.interval * TimeInterval(self.clipRect().width / ZLEditVideoViewController.frameImageSize.width)
+    @objc private func playPartVideo() {
+        playerLayer.player?.seek(to: getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
+        if (playerLayer.player?.rate ?? 0) == 0 {
+            playerLayer.player?.play()
+        }
+    }
+    
+    private func startTimer() {
+        cleanTimer()
+        let duration = interval * TimeInterval(clipRect().width / ZLEditVideoViewController.frameImageSize.width)
         
-        self.timer = Timer.scheduledTimer(withTimeInterval: duration, repeats: true, block: { (_) in
-            if (self.playerLayer.player?.rate ?? 0) == 0 {
-                self.playerLayer.player?.play()
-            }
-            self.playerLayer.player?.seek(to: self.getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
-        })
+        timer = Timer.scheduledTimer(timeInterval: duration, target: ZLWeakProxy(target: self), selector: #selector(playPartVideo), userInfo: nil, repeats: true)
+        timer?.fire()
+        RunLoop.main.add(timer!, forMode: .common)
         
-        self.timer?.fire()
-        RunLoop.main.add(self.timer!, forMode: .common)
+        indicator.isHidden = false
         
-        self.indicator.isHidden = false
-        self.indicator.frame = CGRect(x: self.leftSideView.frame.minX, y: self.leftSideView.frame.minY, width: 2, height: self.leftSideView.frame.height)
-        self.indicator.layer.removeAllAnimations()
         
+        let indicatorW: CGFloat = 2
+        let indicatorH = leftSideView.zl.height
+        let indicatorY = leftSideView.zl.top
+        var indicatorFromX = leftSideView.zl.left
+        var indicatorToX = rightSideView.zl.right - indicatorW
+        
+        if isRTL() {
+            swap(&indicatorFromX, &indicatorToX)
+        }
+        
+        let fromFrame = CGRect(x: indicatorFromX, y: indicatorY, width: indicatorW, height: indicatorH)
+        indicator.frame = fromFrame
+        
+        var toFrame = fromFrame
+        toFrame.origin.x = indicatorToX
+        
+        indicator.layer.removeAllAnimations()
         UIView.animate(withDuration: duration, delay: 0, options: [.allowUserInteraction, .curveLinear, .repeat], animations: {
-            self.indicator.frame = CGRect(x: self.rightSideView.frame.maxX-2, y: self.rightSideView.frame.minY, width: 2, height: self.rightSideView.frame.height)
+            self.indicator.frame = toFrame
         }, completion: nil)
     }
     
-    func cleanTimer() {
-        self.timer?.invalidate()
-        self.timer = nil
-        self.indicator.layer.removeAllAnimations()
-        self.indicator.isHidden = true
-        self.playerLayer.player?.pause()
+    private func cleanTimer() {
+        timer?.invalidate()
+        timer = nil
+        indicator.layer.removeAllAnimations()
+        indicator.isHidden = true
+        playerLayer.player?.pause()
     }
     
-    func getStartTime() -> CMTime {
-        var rect = self.collectionView.convert(self.clipRect(), from: self.view)
-        rect.origin.x -= self.frameImageBorderView.frame.minX
-        let timescale = self.playerLayer.player?.currentTime().timescale ?? 1000
-        let second = max(0, CGFloat(self.interval) * rect.minX / ZLEditVideoViewController.frameImageSize.width)
-        return CMTimeMakeWithSeconds(Float64(second), preferredTimescale: timescale)
+    private func getStartTime() -> CMTime {
+        var rect = collectionView.convert(clipRect(), from: view)
+        rect.origin.x -= frameImageBorderView.frame.minX
+        let second = max(0, CGFloat(interval) * rect.minX / ZLEditVideoViewController.frameImageSize.width)
+        return CMTimeMakeWithSeconds(Float64(second), preferredTimescale: avAsset.duration.timescale)
     }
     
-    func getTimeRange() -> CMTimeRange {
-        let start = self.getStartTime()
-        let d = CGFloat(self.interval) * self.clipRect().width / ZLEditVideoViewController.frameImageSize.width
-        let duration = CMTimeMakeWithSeconds(Float64(d), preferredTimescale: self.playerLayer.player?.currentTime().timescale ?? 1000)
+    private func getTimeRange() -> CMTimeRange {
+        let start = getStartTime()
+        let d = CGFloat(interval) * clipRect().width / ZLEditVideoViewController.frameImageSize.width
+        let duration = CMTimeMakeWithSeconds(Float64(d), preferredTimescale: avAsset.duration.timescale)
         return CMTimeRangeMake(start: start, duration: duration)
     }
     
-    func clipRect() -> CGRect {
+    private func clipRect() -> CGRect {
         var frame = CGRect.zero
-        frame.origin.x = self.leftSideView.frame.minX
-        frame.origin.y = self.leftSideView.frame.minY
-        frame.size.width = self.rightSideView.frame.maxX - frame.minX
-        frame.size.height = self.leftSideView.frame.height
+        frame.origin.x = leftSideView.frame.minX
+        frame.origin.y = leftSideView.frame.minY
+        frame.size.width = rightSideView.frame.maxX - frame.minX
+        frame.size.height = leftSideView.frame.height
         return frame
     }
     
-    func showFetchFailedAlert() {
-        let alert = UIAlertController(title: nil, message: localLanguageTextValue(.timeout), preferredStyle: .alert)
-        let action = UIAlertAction(title: localLanguageTextValue(.ok), style: .default) { (_) in
-            self.dismiss(animated: false, completion: nil)
+    private func showFetchFailedAlert() {
+        let action = ZLCustomAlertAction(title: localLanguageTextValue(.ok), style: .default) { [weak self] _ in
+            self?.dismiss(animated: false)
         }
-        alert.addAction(action)
-        self.showDetailViewController(alert, sender: nil)
+        showAlertController(title: nil, message: localLanguageTextValue(.iCloudVideoLoadFaild), style: .alert, actions: [action], sender: self)
     }
-    
 }
 
-
 extension ZLEditVideoViewController: UIGestureRecognizerDelegate {
-    
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer == self.leftSidePan {
-            let point = gestureRecognizer.location(in: self.view)
-            let frame = self.leftSideView.frame
-            let outerFrame = frame.insetBy(dx: -20, dy: -20)
+        if gestureRecognizer == leftSidePan {
+            let point = gestureRecognizer.location(in: view)
+            let frame = leftSideView.frame
+            let outerFrame = frame.inset(by: UIEdgeInsets(top: -20, left: -40, bottom: -20, right: -20))
             return outerFrame.contains(point)
-        } else if gestureRecognizer == self.rightSidePan {
-            let point = gestureRecognizer.location(in: self.view)
-            let frame = self.rightSideView.frame
-            let outerFrame = frame.insetBy(dx: -20, dy: -20)
+        } else if gestureRecognizer == rightSidePan {
+            let point = gestureRecognizer.location(in: view)
+            let frame = rightSideView.frame
+            let outerFrame = frame.inset(by: UIEdgeInsets(top: -20, left: -20, bottom: -20, right: -40))
             return outerFrame.contains(point)
         }
         return true
     }
-    
 }
 
-
 extension ZLEditVideoViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.cleanTimer()
-        self.playerLayer.player?.seek(to: self.getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
+        cleanTimer()
+        playerLayer.player?.seek(to: getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
     }
     
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
-            self.startTimer()
+            startTimer()
         }
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        self.startTimer()
+        startTimer()
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -435,48 +504,38 @@ extension ZLEditVideoViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.measureCount
+        return measureCount
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ZLEditVideoFrameImageCell.zl_identifier(), for: indexPath) as! ZLEditVideoFrameImageCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ZLEditVideoFrameImageCell.zl.identifier, for: indexPath) as! ZLEditVideoFrameImageCell
         
-        cell.imageView.image = self.frameImageCache[indexPath]
+        if let image = frameImageCache[indexPath.row] {
+            cell.imageView.image = image
+        }
         
         return cell
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let avAsset = self.avAsset, let g = self.generator else {
-            return
+        if requestFailedFrameImageIndex.contains(indexPath.row) {
+            let mes = TimeInterval(indexPath.row) * interval
+            let time = CMTimeMakeWithSeconds(Float64(mes), preferredTimescale: avAsset.duration.timescale)
+            
+            let operation = ZLEditVideoFetchFrameImageOperation(generator: generator, time: time) { [weak self] image, _ in
+                self?.frameImageCache[indexPath.row] = image
+                let cell = self?.collectionView.cellForItem(at: IndexPath(row: indexPath.row, section: 0)) as? ZLEditVideoFrameImageCell
+                cell?.imageView.image = image
+                if image != nil {
+                    self?.requestFailedFrameImageIndex.removeAll { $0 == indexPath.row }
+                }
+            }
+            requestFrameImageQueue.addOperation(operation)
         }
-        guard self.frameImageCache[indexPath] == nil else {
-            return
-        }
-        let cell = cell as! ZLEditVideoFrameImageCell
-        cell.operation?.cancel()
-        
-        let i = Int32(TimeInterval(indexPath.row) * self.interval)
-        let time = CMTimeMake(value: Int64((i * avAsset.duration.timescale)), timescale: avAsset.duration.timescale)
-        let operation = ZLEditVideoFetchFrameImageOperation(generator: g, time: time) { [weak self, weak cell] (image) in
-            self?.frameImageCache[indexPath] = image
-            cell?.imageView.image = image
-            cell?.operation = nil
-        }
-        self.requestFrameImageQueue.addOperation(operation)
     }
-    
-    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let cell = cell as! ZLEditVideoFrameImageCell
-        cell.operation?.cancel()
-        cell.operation = nil
-    }
-    
 }
 
-
 class ZLEditVideoFrameImageBorderView: UIView {
-    
     var validRect: CGRect = .zero {
         didSet {
             self.setNeedsDisplay()
@@ -485,12 +544,13 @@ class ZLEditVideoFrameImageBorderView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.layer.borderWidth = 2
-        self.layer.borderColor = UIColor.clear.cgColor
-        self.backgroundColor = .clear
-        self.isOpaque = false
+        layer.borderWidth = 2
+        layer.borderColor = UIColor.clear.cgColor
+        backgroundColor = .clear
+        isOpaque = false
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -500,63 +560,47 @@ class ZLEditVideoFrameImageBorderView: UIView {
         context?.setStrokeColor(UIColor.white.cgColor)
         context?.setLineWidth(4)
         
-        context?.move(to: CGPoint(x: self.validRect.minX, y: 0))
-        context?.addLine(to: CGPoint(x: self.validRect.minX+self.validRect.width, y: 0))
+        context?.move(to: CGPoint(x: validRect.minX, y: 0))
+        context?.addLine(to: CGPoint(x: validRect.minX + validRect.width, y: 0))
         
-        context?.move(to: CGPoint(x: self.validRect.minX, y: rect.height))
-        context?.addLine(to: CGPoint(x: self.validRect.minX+self.validRect.width, y: rect.height))
+        context?.move(to: CGPoint(x: validRect.minX, y: rect.height))
+        context?.addLine(to: CGPoint(x: validRect.minX + validRect.width, y: rect.height))
         
         context?.strokePath()
     }
-    
 }
 
-
-private var operationKey = "edgeKey"
 class ZLEditVideoFrameImageCell: UICollectionViewCell {
-    
-    var operation: Operation? {
-        get {
-            if let temp = objc_getAssociatedObject(self, &operationKey) as? Operation  {
-                return temp
-            }
-            return nil
-        }
-        set {
-            objc_setAssociatedObject(self, &operationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    var imageView: UIImageView!
+    lazy var imageView: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        return view
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.imageView = UIImageView()
-        self.imageView.contentMode = .scaleAspectFill
-        self.imageView.clipsToBounds = true
-        self.contentView.addSubview(self.imageView)
+        contentView.addSubview(imageView)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.imageView.frame = self.bounds
+        imageView.frame = bounds
     }
-    
 }
 
-
 class ZLEditVideoFetchFrameImageOperation: Operation {
-
-    let generator: AVAssetImageGenerator
+    private let generator: AVAssetImageGenerator
     
-    let time: CMTime
+    private let time: CMTime
     
-    let completion: ( (UIImage?) -> Void )
+    let completion: (UIImage?, CMTime) -> Void
     
     var pri_isExecuting = false {
         willSet {
@@ -568,7 +612,7 @@ class ZLEditVideoFetchFrameImageOperation: Operation {
     }
     
     override var isExecuting: Bool {
-        return self.pri_isExecuting
+        return pri_isExecuting
     }
     
     var pri_isFinished = false {
@@ -581,10 +625,23 @@ class ZLEditVideoFetchFrameImageOperation: Operation {
     }
     
     override var isFinished: Bool {
-        return self.pri_isFinished
+        return pri_isFinished
     }
     
-    init(generator: AVAssetImageGenerator, time: CMTime, completion: @escaping ( (UIImage?) -> Void )) {
+    var pri_isCancelled = false {
+        willSet {
+            self.willChangeValue(forKey: "isCancelled")
+        }
+        didSet {
+            self.didChangeValue(forKey: "isCancelled")
+        }
+    }
+
+    override var isCancelled: Bool {
+        return pri_isCancelled
+    }
+    
+    init(generator: AVAssetImageGenerator, time: CMTime, completion: @escaping ((UIImage?, CMTime) -> Void)) {
         self.generator = generator
         self.time = time
         self.completion = completion
@@ -592,30 +649,31 @@ class ZLEditVideoFetchFrameImageOperation: Operation {
     }
     
     override func start() {
-        
-        self.pri_isExecuting = true
-        do {
-            let cgImage = try self.generator.copyCGImage(at: self.time, actualTime: nil)
-            let image = UIImage(cgImage: cgImage)
-            DispatchQueue.main.async {
-                self.completion(image)
+        if isCancelled {
+            fetchFinish()
+            return
+        }
+        pri_isExecuting = true
+        generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, cgImage, _, result, _ in
+            if result == .succeeded, let cg = cgImage {
+                let image = UIImage(cgImage: cg)
+                ZLMainAsync {
+                    self.completion(image, self.time)
+                }
+                self.fetchFinish()
+            } else {
+                self.fetchFinish()
             }
-            self.fetchFinish()
-        } catch {
-            DispatchQueue.main.async {
-                self.completion(nil)
-            }
-            self.fetchFinish()
         }
     }
     
-    func fetchFinish() {
-        self.pri_isExecuting = false
-        self.pri_isFinished = true
-    }
-    
     override func cancel() {
-        self.fetchFinish()
+        super.cancel()
+        pri_isCancelled = true
     }
     
+    private func fetchFinish() {
+        pri_isExecuting = false
+        pri_isFinished = true
+    }
 }

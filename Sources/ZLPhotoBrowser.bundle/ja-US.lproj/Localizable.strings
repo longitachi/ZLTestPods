@@ -1,59 +1,71 @@
-"ZLPhotoBrowserCameraText" = "カメラ";
-"ZLPhotoBrowserCameraRecordText" = "撮影";
-"ZLPhotoBrowserAblumText" = "アルバム";
-"ZLPhotoBrowserCancelText" = "取り消し";
+"previewCamera" = "カメラ";
+"previewCameraRecord" = "撮影";
+"previewAlbum" = "アルバム";
+"cancel" = "キャンセル";
 
-"ZLPhotoBrowserOriginalText" = "原図";
-"ZLPhotoBrowserDoneText" = "確定";
-"ZLPhotoBrowserOKText" = "確定";
-"ZLPhotoBrowserEditFinishText" = "完了";
+"originalPhoto" = "元の画像";
+"done" = "確定";
+"ok" = "確定";
+"editFinish" = "完了";
 
-"ZLPhotoBrowserBackText" = "戻る";
+"back" = "戻る";
+"edit" = "編集";
+"revert" = "元に戻す";
+"brightness" = "明度";
+"contrast" = "コントラスト";
+"saturation" = "彩度";
 
-"ZLPhotoBrowserEditText" = "編集";
-"ZLPhotoBrowserSaveText" = "保存";
-"ZLPhotoBrowserRevertText" = "元に戻す";
+"photo" = "写真";
+"preview" = "プレビュー";
 
-"ZLPhotoBrowserPhotoText" = "写真";
-"ZLPhotoBrowserPreviewText" = "プレビュー";
+"noPhotoTips" = "写真がありません";
 
-"ZLPhotoBrowserNoPhotoText" = "写真でない";
-"ZLPhotoBrowserNotAllowMixSelect" = "ビデオを選択できません";
+"hudLoading" = "読み込み中";
+"hudProcessing" = "処理中";
 
-"ZLPhotoBrowserLoadingText" = "ロード中，お待ち下さい";
-"ZLPhotoBrowserHandleText" = "後ほど...";
+"exceededMaxSelectCount" = "最大選択数: %ld";
+"longerThanMaxVideoDuration" = "%ld秒より長い動画は選択できません";
+"shorterThanMinVideoDuration" = "％ld秒より短い動画は選択できません";
+"largerThanMaxVideoDataSize" = "%@MBを超える動画は選択できません";
+"smallerThanMinVideoDataSize" = "%@MB未満の動画は選択できません";
+"exceededMaxVideoSelectCount" = "動画の最大選択数: %ld";
+"lessThanMinVideoSelectCount" = "動画の最小選択数: %ld";
 
-"ZLPhotoBrowserSaveImageErrorText" = "画像の保存に失敗しました";
-"ZLPhotoBrowserExceededMaxSelectCountText" = "最大選択数: %ld";
-"ZLPhotoBrowserLongerThanMaxVideoDurationText" = "%ldsより長い動画は選択できません";
-"ZLPhotoBrowserShorterThanMinVideoDurationText" = "％ldsより短い動画は選択できません";
-"ZLPhotoBrowserMaxVideoSelectCountInMix" = "動画の最大選択数: %ld";
-"ZLPhotoBrowserMinVideoSelectCountInMix" = "動画の最小選択数: %ld";
+"noCameraAuthority" = "「設定」>「プライパシー」>「カメラ」から、%@があなたのデバイスのカメラにアクセスする許可をしてください";
+"noPhotoLibratyAuthority" = "「設定」>「プライバシー」>「写真」から、%@があなたのアルバムにアクセスする許可をしてください";
+"noMicrophoneAuthority" = "音声を録音できません。「設定」 >「%@」に移動し、マイクへのアクセスを有効にしてください";
+"cameraUnavailable" = "カメラは利用できません";
+"keepRecording" = "撮影を続ける";
+"gotoSettings" = "設定に移動";
 
-"ZLPhotoBrowserNoCameraAuthorityText" = "「設定」->「プライパシー」->「カメラ」から、%@があなたのデバイスのカメラにアクセスする許可をしてください";
-"ZLPhotoBrowserNoAblumAuthorityText" = "%@があなたのアルバムにアクセスするには「設定」->「プライバシー」->「写真」";
-"ZLPhotoBrowserNoMicrophoneAuthorityText" = "「設定」->「プライパシー」->「マイク」から、%@があなたのデバイスのマイクにアクセスする許可をしてください";
-"ZLPhotoBrowserCameraUnavailableText" = "カメラは利用できません";
+"iCloudVideoLoadFaild" = "iCloudから同期できません";
+"imageLoadFailed" = "ロード失敗";
 
-"ZLPhotoBrowseriCloudPhotoLoadFailedText" = "写真のライブラリをダウンロードした後の再試行";
-"ZLPhotoBrowseriCloudVideoLoadFailedText" = "iCloudから同期できません";
+"save" = "セーブ";
+"saveImageError" = "画像の保存に失敗しました";
+"saveVideoError" = "ビデオの保存に失敗しました";
+"timeout" = "タイムアウトしました";
 
-"ZLPhotoBrowserLoadImageFailed" = "ロード失敗";
-"ZLPhotoBrowserSaveVideoFailed" = "ビデオの保存に失敗しました";
-"ZLPhotoBrowserRequestTimeout" = "要求タイムアウト";
+"customCameraTips" = "タップして撮影、長押しして記録できます";
+"customCameraTakePhotoTips" = "タップして撮影できます";
+"customCameraRecordVideoTips" = "長押しで記録できます";
+"minRecordTimeTips" = "最低 %ld秒以上記録してください";
 
-"ZLPhotoBrowserCustomCameraTips" = "タップして撮影、長押しで記録";
+"cameraRoll" = "最近の項目";
+"panoramas" = "パノラマ";
+"videos" = "ビデオ";
+"favorites" = "お気に入り";
+"timelapses" = "タイムラプス";
+"recentlyAdded" = "最後に追加した項目";
+"bursts" = "バースト";
+"slomoVideos" = "スローモーション";
+"selfPortraits" = "セルフイー";
+"screenshots" = "スクリーンショット";
+"depthEffect" = "ポートレート";
+"livePhotos" = "Live Photos";
+"animated" = "アニメーション";
+"myPhotoStream" = "マイフォトストリーム";
 
-"ZLPhotoBrowserCameraRoll" = "カメラロール";
-"ZLPhotoBrowserPanoramas" = "パノラマ";
-"ZLPhotoBrowserVideos" = "ビデオ";
-"ZLPhotoBrowserFavorites" = "お気に入り";
-"ZLPhotoBrowserTimelapses" = "タイムラプス";
-"ZLPhotoBrowserRecentlyAdded" = "最後に追加した項目";
-"ZLPhotoBrowserBursts" = "バースト";
-"ZLPhotoBrowserSlomoVideos" = "スローモーション";
-"ZLPhotoBrowserSelfPortraits" = "セルフイー";
-"ZLPhotoBrowserScreenshots" = "スクリーンショット";
-"ZLPhotoBrowserDepthEffect" = "ポートレート";
-"ZLPhotoBrowserLivePhotos" = "Live Photos";
-"ZLPhotoBrowserAnimated" = "アニメーション";
+"noTitleAlbumListPlaceholder" = "画像すべて";
+"unableToAccessAllPhotos" = "アルバム内のすべての写真にアクセスできません。\n「写真」内の「すべての写真」 へのアクセスを許可してください。";
+"textStickerRemoveTips" = "ここにドラッグして削除します";

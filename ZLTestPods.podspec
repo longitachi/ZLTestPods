@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name          = 'ZLTestPods'
-  s.version       = '0.2.8'
+  s.version       = '0.2.9'
   s.summary       = 'test dependency'
   s.homepage      = 'https://github.com/longitachi/ZLTestPods'
   s.license       = { :type => "MIT", :file => "LICENSE" }
@@ -14,7 +14,9 @@ Pod::Spec.new do |s|
   s.resources     = 'Sources/*.{png,bundle}'
 
   s.requires_arc  = true
-  s.frameworks    = 'UIKit','Photos','PhotosUI','AVFoundation','CoreMotion'
+  s.frameworks    = 'UIKit','Photos','PhotosUI','AVFoundation','CoreMotion', 'Accelerate', 'libswiftAVFoundation'
+
+  s.resources     = 'Sources/*.{png,bundle}'
 
   s.subspec "Core" do |sp|
     sp.source_files  = ["Sources/**/*.swift", "Sources/ZLPhotoBrowser.h"]

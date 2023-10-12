@@ -4,29 +4,43 @@
 //
 //  Created by long on 2020/8/11.
 //
+//  Copyright (c) 2020 Long Zhang <495181165@qq.com>
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 
 import UIKit
+import Photos
 
-let ZLMaxImageWidth: CGFloat = 600
+let ZLMaxImageWidth: CGFloat = 500
 
-func zlRGB(_ red: CGFloat, _ green: CGFloat, _ blue: CGFloat) -> UIColor {
-    return UIColor(red: red / 255, green: green / 255, blue: blue / 255, alpha: 1)
-}
-
-func getImage(_ named: String) -> UIImage? {
-    if ZLCustomImageDeply.deploy.contains(named) {
-        return UIImage(named: named)
-    }
-    return UIImage(named: named, in: Bundle.zlPhotoBrowserBundle, compatibleWith: nil)
-    //UIImage(named: "ZLPhotoBrowser.bundle/" + named) ?? UIImage(named: "Frameworks/ZLPhotoBrowser.framework/ZLPhotoBrowser.bundle/" + named)
-}
-
-func getFont(_ size: CGFloat) -> UIFont {
-    guard let name = ZLCustomFontDeploy.fontName else {
-        return UIFont.systemFont(ofSize: size)
-    }
+enum ZLLayout {
+    static let navTitleFont: UIFont = .zl.font(ofSize: 17)
     
-    return UIFont(name: name, size: size) ?? UIFont.systemFont(ofSize: size)
+    static let bottomToolViewH: CGFloat = 55
+    
+    static let bottomToolBtnH: CGFloat = 34
+    
+    static let bottomToolBtnY: CGFloat = 10
+    
+    static let bottomToolTitleFont: UIFont = .zl.font(ofSize: 17)
+    
+    static let bottomToolBtnCornerRadius: CGFloat = 5
 }
 
 func markSelected(source: inout [ZLPhotoModel], selected: inout [ZLPhotoModel]) {
@@ -36,18 +50,21 @@ func markSelected(source: inout [ZLPhotoModel], selected: inout [ZLPhotoModel]) 
     
     var selIds: [String: Bool] = [:]
     var selEditImage: [String: UIImage] = [:]
+    var selEditModel: [String: ZLEditImageModel] = [:]
     var selIdAndIndex: [String: Int] = [:]
     
     for (index, m) in selected.enumerated() {
         selIds[m.ident] = true
         selEditImage[m.ident] = m.editImage
+        selEditModel[m.ident] = m.editImageModel
         selIdAndIndex[m.ident] = index
     }
     
-    source.forEach { (m) in
+    source.forEach { m in
         if selIds[m.ident] == true {
             m.isSelected = true
             m.editImage = selEditImage[m.ident]
+            m.editImageModel = selEditModel[m.ident]
             selected[selIdAndIndex[m.ident]!] = m
         } else {
             m.isSelected = false
@@ -69,11 +86,11 @@ func getAppName() -> String {
 }
 
 func deviceIsiPhone() -> Bool {
-    return UI_USER_INTERFACE_IDIOM() == .phone
+    return UIDevice.current.userInterfaceIdiom == .phone
 }
 
 func deviceIsiPad() -> Bool {
-    return UI_USER_INTERFACE_IDIOM() == .pad
+    return UIDevice.current.userInterfaceIdiom == .pad
 }
 
 func deviceSafeAreaInsets() -> UIEdgeInsets {
@@ -86,57 +103,184 @@ func deviceSafeAreaInsets() -> UIEdgeInsets {
     return insets
 }
 
-func getSpringAnimation() -> CAKeyframeAnimation {
-    let animate = CAKeyframeAnimation(keyPath: "transform")
-    animate.duration = 0.3
-    animate.isRemovedOnCompletion = true
-    animate.fillMode = .forwards
-    
-    animate.values = [CATransform3DMakeScale(0.7, 0.7, 1),
-                      CATransform3DMakeScale(1.2, 1.2, 1),
-                      CATransform3DMakeScale(0.8, 0.8, 1),
-                      CATransform3DMakeScale(1, 1, 1)]
-    return animate
+func deviceIsFringeScreen() -> Bool {
+    return deviceSafeAreaInsets().top > 0
+}
+
+func isSmallScreen() -> Bool {
+    return UIScreen.main.bounds.height <= 812
+}
+
+func isRTL() -> Bool {
+    return UIView.userInterfaceLayoutDirection(for: UIView.appearance().semanticContentAttribute) == .rightToLeft
 }
 
 func showAlertView(_ message: String, _ sender: UIViewController?) {
-    let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-    let action = UIAlertAction(title: localLanguageTextValue(.ok), style: .default, handler: nil)
-    alert.addAction(action)
-    if deviceIsiPad() {
-        alert.popoverPresentationController?.sourceView = sender?.view
+    ZLMainAsync {
+        let action = ZLCustomAlertAction(title: localLanguageTextValue(.ok), style: .default, handler: nil)
+        showAlertController(title: nil, message: message, style: .alert, actions: [action], sender: sender)
     }
-    (sender ?? UIApplication.shared.keyWindow?.rootViewController)?.showDetailViewController(alert, sender: nil)
+}
+
+func showAlertController(title: String?, message: String?, style: ZLCustomAlertStyle, actions: [ZLCustomAlertAction], sender: UIViewController?) {
+    if let alertClass = ZLPhotoUIConfiguration.default().customAlertClass {
+        let alert = alertClass.alert(title: title, message: message ?? "", style: style)
+        actions.forEach { alert.addAction($0) }
+        alert.show(with: sender)
+        return
+    }
+    
+    let alert = UIAlertController(title: title, message: message, preferredStyle: style.toSystemAlertStyle)
+    actions
+        .map { $0.toSystemAlertAction() }
+        .forEach { alert.addAction($0) }
+    
+    let presentedVC = sender ?? UIApplication.shared.keyWindow?.rootViewController
+    
+    if deviceIsiPad() {
+        alert.popoverPresentationController?.sourceView = presentedVC?.view
+    }
+    
+    presentedVC?.zl.showAlertController(alert)
 }
 
 func canAddModel(_ model: ZLPhotoModel, currentSelectCount: Int, sender: UIViewController?, showAlert: Bool = true) -> Bool {
-    if currentSelectCount >= ZLPhotoConfiguration.default().maxSelectCount {
+    let config = ZLPhotoConfiguration.default()
+    
+    guard config.canSelectAsset?(model.asset) ?? true else {
+        return false
+    }
+    
+    if currentSelectCount >= config.maxSelectCount {
         if showAlert {
-            let message = String(format: localLanguageTextValue(.maxSelectCount), ZLPhotoConfiguration.default().maxSelectCount)
+            let message = String(format: localLanguageTextValue(.exceededMaxSelectCount), config.maxSelectCount)
             showAlertView(message, sender)
         }
         return false
     }
-    if currentSelectCount > 0 {
-        if !ZLPhotoConfiguration.default().allowMixSelect, model.type == .video {
-            return false
-        }
+    
+    if currentSelectCount > 0,
+       !config.allowMixSelect,
+       model.type == .video{
+        return false
     }
-    if model.type == .video {
-        if model.second > ZLPhotoConfiguration.default().maxSelectVideoDuration {
-            if showAlert {
-                let message = String(format: localLanguageTextValue(.longerThanMaxVideoDuration), ZLPhotoConfiguration.default().maxSelectVideoDuration)
-                showAlertView(message, sender)
-            }
-            return false
-        }
-        if model.second < ZLPhotoConfiguration.default().minSelectVideoDuration {
-            if showAlert {
-                let message = String(format: localLanguageTextValue(.shorterThanMaxVideoDuration), ZLPhotoConfiguration.default().minSelectVideoDuration)
-                showAlertView(message, sender)
-            }
-            return false
-        }
+    
+    guard model.type == .video else {
+        return true
     }
+    
+    if model.second > config.maxSelectVideoDuration {
+        if showAlert {
+            let message = String(format: localLanguageTextValue(.longerThanMaxVideoDuration), config.maxSelectVideoDuration)
+            showAlertView(message, sender)
+        }
+        return false
+    }
+    
+    if model.second < config.minSelectVideoDuration {
+        if showAlert {
+            let message = String(format: localLanguageTextValue(.shorterThanMinVideoDuration), config.minSelectVideoDuration)
+            showAlertView(message, sender)
+        }
+        return false
+    }
+    
+    guard (config.minSelectVideoDataSize > 0 || config.maxSelectVideoDataSize != .greatestFiniteMagnitude),
+          let size = model.dataSize else {
+        return true
+    }
+    
+    if size > config.maxSelectVideoDataSize {
+        if showAlert {
+            let value = Int(round(config.maxSelectVideoDataSize / 1024))
+            let message = String(format: localLanguageTextValue(.largerThanMaxVideoDataSize), String(value))
+            showAlertView(message, sender)
+        }
+        return false
+    }
+    
+    if size < config.minSelectVideoDataSize {
+        if showAlert {
+            let value = Int(round(config.minSelectVideoDataSize / 1024))
+            let message = String(format: localLanguageTextValue(.smallerThanMinVideoDataSize), String(value))
+            showAlertView(message, sender)
+        }
+        return false
+    }
+    
     return true
+}
+
+func downloadAssetIfNeed(model: ZLPhotoModel, sender: UIViewController?, completion: @escaping (() -> Void)) {
+    let config = ZLPhotoConfiguration.default()
+    guard model.type == .video,
+          model.asset.zl.isInCloud,
+          config.downloadVideoBeforeSelecting else {
+        completion()
+        return
+    }
+
+    var requestAssetID: PHImageRequestID?
+    let hud = ZLProgressHUD.show(timeout: ZLPhotoUIConfiguration.default().timeout)
+    hud.timeoutBlock = { [weak sender] in
+        showAlertView(localLanguageTextValue(.timeout), sender)
+        if let requestAssetID = requestAssetID {
+            PHImageManager.default().cancelImageRequest(requestAssetID)
+        }
+    }
+
+    requestAssetID = ZLPhotoManager.fetchVideo(for: model.asset, completion: { _, _, isDegraded in
+        hud.hide()
+        
+        if !isDegraded {
+            completion()
+        }
+    })
+}
+
+/// Check if the video duration and size meet the requirements
+func videoIsMeetRequirements(model: ZLPhotoModel) -> Bool {
+    guard model.type == .video else {
+        return true
+    }
+    
+    let config = ZLPhotoConfiguration.default()
+    
+    guard config.minSelectVideoDuration...config.maxSelectVideoDuration ~= model.second else {
+        return false
+    }
+    
+    if (config.minSelectVideoDataSize > 0 || config.maxSelectVideoDataSize != .greatestFiniteMagnitude),
+       let dataSize = model.dataSize,
+       !(config.minSelectVideoDataSize...config.maxSelectVideoDataSize ~= dataSize) {
+        return false
+    }
+    
+    return true
+}
+
+func ZLMainAsync(after: TimeInterval = 0, handler: @escaping (() -> Void)) {
+    if after > 0 {
+        DispatchQueue.main.asyncAfter(deadline: .now() + after) {
+            handler()
+        }
+    } else {
+        if Thread.isMainThread {
+            handler()
+        } else {
+            DispatchQueue.main.async {
+                handler()
+            }
+        }
+    }
+}
+
+func zl_debugPrint(_ message: Any...) {
+    message.forEach { debugPrint($0) }
+}
+
+func zlLoggerInDebug(_ lastMessage: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
+    #if DEBUG
+        print("\(file):\(line): \(lastMessage())")
+    #endif
 }
