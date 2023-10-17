@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.resources     = 'Sources/*.{png,bundle}'
 
   s.requires_arc  = true
-  s.frameworks    = 'UIKit','Photos','PhotosUI','AVFoundation','CoreMotion', 'Accelerate', 'libswiftAVFoundation'
+  s.frameworks    = 'UIKit','Photos','PhotosUI','AVFoundation','CoreMotion', 'Accelerate'
 
   s.resources     = 'Sources/*.{png,bundle}'
 
