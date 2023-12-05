@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import ZLPhotoBrowser
+import ZLTestPods
 import Photos
 
 class ViewController: UIViewController {

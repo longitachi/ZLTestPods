@@ -7,7 +7,7 @@
 
 import UIKit
 import Photos
-import ZLPhotoBrowser
+import ZLTestPods
 
 class WeChatMomentDemoViewController: UIViewController {
 

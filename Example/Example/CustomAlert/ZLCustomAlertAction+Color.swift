@@ -5,7 +5,7 @@
 //  Created by long on 2022/7/1.
 //
 
-import ZLPhotoBrowser
+import ZLTestPods
 import UIKit
 
 extension ZLCustomAlertAction.Style {

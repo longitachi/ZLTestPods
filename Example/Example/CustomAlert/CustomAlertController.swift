@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import ZLPhotoBrowser
+import ZLTestPods
 
 class CustomAlertController: UIViewController {
     private let cornerRadiu: CGFloat = 12

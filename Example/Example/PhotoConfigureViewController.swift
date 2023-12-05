@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import ZLPhotoBrowser
+import ZLTestPods
 
 class PhotoConfigureViewController: UIViewController {
     let config = ZLPhotoConfiguration.default()

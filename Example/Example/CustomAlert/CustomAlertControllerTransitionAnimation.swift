@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import ZLPhotoBrowser
+import ZLTestPods
 
 private let animateDuration: TimeInterval = 0.25
 
