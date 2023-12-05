@@ -145,12 +145,6 @@ public extension ZLPhotoUIConfiguration {
     }
     
     @discardableResult
-    func showSelectBtnWhenSingleSelect(_ value: Bool) -> ZLPhotoUIConfiguration {
-        showSelectBtnWhenSingleSelect = value
-        return self
-    }
-    
-    @discardableResult
     func showSelectedMask(_ value: Bool) -> ZLPhotoUIConfiguration {
         showSelectedMask = value
         return self
@@ -169,14 +163,20 @@ public extension ZLPhotoUIConfiguration {
     }
     
     @discardableResult
-    func showSelectedIndex(_ value: Bool) -> ZLPhotoUIConfiguration {
-        showSelectedIndex = value
+    func showSelectedPhotoPreview(_ value: Bool) -> ZLPhotoUIConfiguration {
+        showSelectedPhotoPreview = value
         return self
     }
     
     @discardableResult
-    func showSelectedPhotoPreview(_ value: Bool) -> ZLPhotoUIConfiguration {
-        showSelectedPhotoPreview = value
+    func showAddPhotoButton(_ value: Bool) -> ZLPhotoUIConfiguration {
+        showAddPhotoButton = value
+        return self
+    }
+    
+    @discardableResult
+    func showEnterSettingTips(_ value: Bool) -> ZLPhotoUIConfiguration {
+        showEnterSettingTips = value
         return self
     }
     
@@ -351,6 +351,18 @@ public extension ZLPhotoUIConfiguration {
     @discardableResult
     func bottomToolViewBgColorOfPreviewVC(_ color: UIColor) -> ZLPhotoUIConfiguration {
         bottomToolViewBgColorOfPreviewVC = color
+        return self
+    }
+    
+    @discardableResult
+    func originalSizeLabelTextColor(_ color: UIColor) -> ZLPhotoUIConfiguration {
+        originalSizeLabelTextColor = color
+        return self
+    }
+    
+    @discardableResult
+    func originalSizeLabelTextColorOfPreviewVC(_ color: UIColor) -> ZLPhotoUIConfiguration {
+        originalSizeLabelTextColorOfPreviewVC = color
         return self
     }
     

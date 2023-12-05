@@ -111,7 +111,7 @@ class ZLClipImageViewController: UIViewController {
         let layer = CAGradientLayer()
         layer.colors = [
             UIColor.black.withAlphaComponent(0.15).cgColor,
-            UIColor.black.withAlphaComponent(0.35).cgColor,
+            UIColor.black.withAlphaComponent(0.35).cgColor
         ]
         layer.locations = [0, 1]
         return layer
@@ -220,13 +220,11 @@ class ZLClipImageViewController: UIViewController {
     
     var cancelClipBlock: (() -> Void)?
     
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
+    override var prefersStatusBarHidden: Bool { true }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
+    override var prefersHomeIndicatorAutoHidden: Bool { true }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .portrait }
     
     deinit {
         zl_debugPrint("ZLClipImageViewController deinit")
@@ -905,7 +903,7 @@ class ZLClipImageViewController: UIViewController {
     
     private func clipImage() -> (clipImage: UIImage, editRect: CGRect) {
         let frame = convertClipRectToEditImageRect()
-        let clipImage = editImage.zl.clipImage(angle: 0, editRect: frame, isCircle: selectedRatio.isCircle) ?? editImage
+        let clipImage = editImage.zl.clipImage(angle: 0, editRect: frame, isCircle: selectedRatio.isCircle)
         return (clipImage, frame)
     }
     
@@ -1114,7 +1112,7 @@ class ZLImageClipRatioCell: UICollectionViewCell {
 }
 
 class ZLClipShadowView: UIView {
-    var isCircle: Bool = false {
+    var isCircle = false {
         didSet {
             (layer as? ZLClipShadowViewLayer)?.isCircle = isCircle
         }
@@ -1166,6 +1164,7 @@ class ZLClipShadowViewLayer: CALayer {
         return super.needsDisplay(forKey: key) || key == #keyPath(clearRect) || key == #keyPath(isCircle)
     }
 }
+
 // MARK: 裁剪网格视图
 
 class ZLClipOverlayView: UIView {

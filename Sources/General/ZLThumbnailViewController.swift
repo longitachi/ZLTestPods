@@ -88,6 +88,17 @@ class ZLThumbnailViewController: UIViewController {
         return btn
     }()
     
+    private lazy var originalLabel: UILabel = {
+        let label = UILabel()
+        label.font = .zl.font(ofSize: 12)
+        label.textColor = .zl.originalSizeLabelTextColor
+        label.textAlignment = .center
+        label.minimumScaleFactor = 0.5
+        label.adjustsFontSizeToFitWidth = true
+        label.isHidden = true
+        return label
+    }()
+    
     private lazy var doneBtn: UIButton = {
         let btn = createBtn(localLanguageTextValue(.done), #selector(doneBtnClick), true)
         btn.layer.masksToBounds = true
@@ -99,7 +110,7 @@ class ZLThumbnailViewController: UIViewController {
         let btn = UIButton(type: .custom)
         btn.setImage(.zl.getImage("zl_arrow_down"), for: .normal)
         btn.addTarget(self, action: #selector(scrollToBottomBtnClick), for: .touchUpInside)
-        btn.zl.addShadow(color: .zl.bottomToolViewBgColor, radius: 5, opacity: 1, offset: CGSize(width: 0, height: 5))
+        btn.zl.addShadow(color: .zl.rgba(35, 35, 35), radius: 5, opacity: 1, offset: CGSize(width: 0, height: 3))
         return btn
     }()
     
@@ -111,8 +122,8 @@ class ZLThumbnailViewController: UIViewController {
     
     private var isLayoutOK = false
     
-    /// 设备旋转前第一个可视indexPath
-    private var firstVisibleIndexPathBeforeRotation: IndexPath?
+    /// 设备旋转前最后一个可视indexPath
+    private var lastVisibleIndexPathBeforeRotation: IndexPath?
     
     /// 是否触发了横竖屏切换
     private var isSwitchOrientation = false
@@ -144,7 +155,9 @@ class ZLThumbnailViewController: UIViewController {
     private var lastPanUpdateTime = CACurrentMediaTime()
     
     private let showLimitAuthTipsView: Bool = {
-        if #available(iOS 14.0, *), PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited, ZLPhotoConfiguration.default().showEnterSettingTips {
+        if #available(iOS 14.0, *),
+           PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited,
+           ZLPhotoUIConfiguration.default().showEnterSettingTips {
             return true
         } else {
             return false
@@ -199,7 +212,7 @@ class ZLThumbnailViewController: UIViewController {
     
     @available(iOS 14, *)
     var showAddPhotoCell: Bool {
-        PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited && ZLPhotoConfiguration.default().showAddPhotoButton && albumList.isCameraRoll
+        PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited && ZLPhotoUIConfiguration.default().showAddPhotoButton && albumList.isCameraRoll
     }
     
     private var hiddenStatusBar = false
@@ -233,8 +246,6 @@ class ZLThumbnailViewController: UIViewController {
         if ZLPhotoConfiguration.default().allowSlideSelect {
             view.addGestureRecognizer(panGes)
         }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationChanged(_:)), name: UIApplication.willChangeStatusBarOrientationNotification, object: nil)
         
         loadPhotos()
         
@@ -301,14 +312,14 @@ class ZLThumbnailViewController: UIViewController {
             bottomViewH = 0
         }
         
-        let totalWidth = view.frame.width - insets.left - insets.right
+        let totalWidth = view.zl.width - insets.left - insets.right
         collectionView.frame = CGRect(x: insets.left, y: 0, width: totalWidth, height: view.frame.height)
         collectionView.contentInset = UIEdgeInsets(top: collectionViewInsetTop, left: 0, bottom: bottomViewH, right: 0)
         collectionView.scrollIndicatorInsets = UIEdgeInsets(top: insets.top, left: 0, bottom: bottomViewH, right: 0)
 
         let scrollToBottomSize = 35.0
-        let scrollToBottomX = totalWidth - scrollToBottomSize - 22
-        let scrollToBottomY = view.frame.height - insets.bottom - bottomViewH - scrollToBottomSize - 30
+        let scrollToBottomX = view.zl.width - insets.right - scrollToBottomSize - 22
+        let scrollToBottomY = view.zl.height - insets.bottom - bottomViewH - scrollToBottomSize - 30
         scrollToBottomBtn.frame = CGRect(
             origin: CGPoint(x: scrollToBottomX, y: scrollToBottomY),
             size: CGSize(width: scrollToBottomSize, height: scrollToBottomSize)
@@ -318,10 +329,9 @@ class ZLThumbnailViewController: UIViewController {
             scrollToBottom()
         } else if isSwitchOrientation {
             isSwitchOrientation = false
-            collectionView.performBatchUpdates(nil) { _ in
-                if let firstVisibleIndexPathBeforeRotation = self.firstVisibleIndexPathBeforeRotation {
-                    self.collectionView.scrollToItem(at: firstVisibleIndexPathBeforeRotation, at: .top, animated: false)
-                }
+            
+            if let lastVisibleIndexPathBeforeRotation {
+                collectionView.scrollToItem(at: lastVisibleIndexPathBeforeRotation, at: .bottom, animated: false)
             }
         }
         
@@ -353,14 +363,24 @@ class ZLThumbnailViewController: UIViewController {
                 )
             ).width + (originalBtn.currentImage?.size.width ?? 19) + 12
             let originBtnMaxW = min(btnMaxWidth, originBtnW)
-            originalBtn.frame = CGRect(x: (bottomView.bounds.width - originBtnMaxW) / 2 - 5, y: btnY, width: originBtnMaxW, height: btnH)
+            originalBtn.frame = CGRect(x: (bottomView.zl.width - originBtnMaxW) / 2 - 5, y: btnY, width: originBtnMaxW, height: btnH)
+            originalLabel.frame = CGRect(
+                x: (bottomView.zl.width - btnMaxWidth) / 2 - 5,
+                y: originalBtn.zl.bottom,
+                width: btnMaxWidth,
+                height: originalLabel.font.lineHeight
+            )
             
             refreshDoneBtnFrame()
         }
     }
     
-    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        
+        lastVisibleIndexPathBeforeRotation = collectionView.indexPathsForVisibleItems
+            .max { $0.row < $1.row }
+        isSwitchOrientation = true
         collectionView.collectionViewLayout.invalidateLayout()
     }
     
@@ -385,6 +405,7 @@ class ZLThumbnailViewController: UIViewController {
         
         bottomView.addSubview(previewBtn)
         bottomView.addSubview(originalBtn)
+        bottomView.addSubview(originalLabel)
         bottomView.addSubview(doneBtn)
         
         setupNavView()
@@ -491,11 +512,10 @@ class ZLThumbnailViewController: UIViewController {
     
     private func shouldShowBottomToolBar() -> Bool {
         let config = ZLPhotoConfiguration.default()
-        let uiConfig = ZLPhotoUIConfiguration.default()
         let condition1 = config.editAfterSelectThumbnailImage &&
             config.maxSelectCount == 1 &&
             (config.allowEditImage || config.allowEditVideo)
-        let condition2 = config.allowPreviewPhotos && config.maxSelectCount == 1 && !uiConfig.showSelectBtnWhenSingleSelect
+        let condition2 = config.allowPreviewPhotos && config.maxSelectCount == 1 && !config.showSelectBtnWhenSingleSelect
         let condition3 = !config.allowPreviewPhotos && config.maxSelectCount == 1
         if condition1 || condition2 || condition3 {
             return false
@@ -524,7 +544,7 @@ class ZLThumbnailViewController: UIViewController {
         }
         
         if (shouldShow && scrollToBottomBtn.alpha == 1) ||
-           (!shouldShow && scrollToBottomBtn.alpha == 0) {
+            (!shouldShow && scrollToBottomBtn.alpha == 0) {
             return
         }
         
@@ -547,6 +567,7 @@ class ZLThumbnailViewController: UIViewController {
     
     @objc private func originalPhotoClick() {
         originalBtn.isSelected.toggle()
+        refreshOriginalLabelText()
         (navigationController as? ZLImageNavController)?.isSelectedOriginal = originalBtn.isSelected
     }
     
@@ -569,13 +590,17 @@ class ZLThumbnailViewController: UIViewController {
         }
     }
     
-    @objc private func deviceOrientationChanged(_ notify: Notification) {
-        let pInView = collectionView.convert(CGPoint(x: 100, y: 100), from: view)
-        firstVisibleIndexPathBeforeRotation = collectionView.indexPathForItem(at: pInView)
-        isSwitchOrientation = true
-    }
-    
     @objc private func slideSelectAction(_ pan: UIPanGestureRecognizer) {
+        if pan.state == .ended || pan.state == .cancelled {
+            stopAutoScroll()
+            beginPanSelect = false
+            panSelectType = .none
+            arrSlideIndexPaths.removeAll()
+            dicOriSelectStatus.removeAll()
+            resetBottomToolBtnStatus()
+            return
+        }
+        
         let point = pan.location(in: collectionView)
         guard let indexPath = collectionView.indexPathForItem(at: point) else {
             return
@@ -717,13 +742,6 @@ class ZLThumbnailViewController: UIViewController {
                     }
                 }
             }
-        } else if pan.state == .ended || pan.state == .cancelled {
-            stopAutoScroll()
-            beginPanSelect = false
-            panSelectType = .none
-            arrSlideIndexPaths.removeAll()
-            dicOriSelectStatus.removeAll()
-            resetBottomToolBtnStatus()
         }
     }
     
@@ -823,7 +841,29 @@ class ZLThumbnailViewController: UIViewController {
             doneBtn.backgroundColor = .zl.bottomToolViewBtnDisableBgColor
         }
         originalBtn.isSelected = nav.isSelectedOriginal
+        refreshOriginalLabelText()
         refreshDoneBtnFrame()
+    }
+    
+    private func refreshOriginalLabelText() {
+        guard ZLPhotoConfiguration.default().showOriginalSizeWhenSelectOriginal else {
+            return
+        }
+        
+        guard originalBtn.isSelected else {
+            originalLabel.isHidden = true
+            return
+        }
+        
+        let selectModels = (navigationController as? ZLImageNavController)?.arrSelectedModels ?? []
+        if selectModels.isEmpty {
+            originalLabel.isHidden = true
+        } else {
+            originalLabel.isHidden = false
+            let totalSize = selectModels.reduce(into: 0) { $0 += ($1.dataSize ?? 0) * 1024 }
+            let str = ByteCountFormatter.string(fromByteCount: Int64(totalSize), countStyle: .binary).replacingOccurrences(of: " ", with: "")
+            originalLabel.text = localLanguageTextValue(.originalTotalSize) + " \(str)"
+        }
     }
     
     private func refreshDoneBtnFrame() {
@@ -935,7 +975,7 @@ class ZLThumbnailViewController: UIViewController {
             canSelect = false
         }
         // 单选模式，且不显示选择按钮时，不允许选择
-        if config.maxSelectCount == 1, !uiConfig.showSelectBtnWhenSingleSelect {
+        if config.maxSelectCount == 1, !config.showSelectBtnWhenSingleSelect {
             canSelect = false
         }
         if canSelect, canAddModel(newModel, currentSelectCount: nav?.arrSelectedModels.count ?? 0, sender: self, showAlert: false) {
@@ -1056,6 +1096,9 @@ class ZLThumbnailViewController: UIViewController {
     func endPopTransition() {
         hiddenStatusBar = false
         setNeedsStatusBarAppearanceUpdate()
+        if deviceIsiPad() {
+            view.setNeedsLayout()
+        }
     }
 }
 
@@ -1064,15 +1107,19 @@ class ZLThumbnailViewController: UIViewController {
 extension ZLThumbnailViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let config = ZLPhotoConfiguration.default()
-        let uiConfig = ZLPhotoUIConfiguration.default()
-        if (config.maxSelectCount == 1 && !uiConfig.showSelectBtnWhenSingleSelect) || embedAlbumListView?.isHidden == false {
+        if (config.maxSelectCount == 1 && !config.showSelectBtnWhenSingleSelect) || embedAlbumListView?.isHidden == false {
             return false
         }
         
         let point = gestureRecognizer.location(in: view)
         let navFrame = (embedNavView ?? externalNavView)?.frame ?? .zero
         if navFrame.contains(point) ||
-           bottomView.frame.contains(point) {
+            bottomView.frame.contains(point) {
+            return false
+        }
+        
+        let pointInCollectionView = gestureRecognizer.location(in: collectionView)
+        if collectionView.indexPathForItem(at: pointInCollectionView) == nil {
             return false
         }
         
@@ -1184,7 +1231,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
             }
         }
         
-        if uiConfig.showSelectedIndex,
+        if config.showSelectedIndex,
            let index = nav?.arrSelectedModels.firstIndex(where: { $0 == model }) {
             setCellIndex(cell, showIndexLabel: true, index: index + 1)
         } else {
@@ -1298,7 +1345,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     private func setCellIndex(_ cell: ZLThumbnailPhotoCell?, showIndexLabel: Bool, index: Int) {
-        guard ZLPhotoUIConfiguration.default().showSelectedIndex else {
+        guard ZLPhotoConfiguration.default().showSelectedIndex else {
             return
         }
         cell?.index = index
@@ -1307,9 +1354,9 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
     
     private func refreshCellIndexAndMaskView() {
         refreshCameraCellStatus()
-        
+        let config = ZLPhotoConfiguration.default()
         let uiConfig = ZLPhotoUIConfiguration.default()
-        let showIndex = uiConfig.showSelectedIndex
+        let showIndex = config.showSelectedIndex
         let showMask = uiConfig.showSelectedMask || uiConfig.showInvalidMask
         
         guard showIndex || showMask else {
@@ -1415,6 +1462,10 @@ extension ZLThumbnailViewController: UIScrollViewDelegate {
 // MARK: Image picker delegate
 
 extension ZLThumbnailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true) {
             let image = info[.originalImage] as? UIImage

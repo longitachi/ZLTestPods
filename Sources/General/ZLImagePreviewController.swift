@@ -150,11 +150,13 @@ public class ZLImagePreviewController: UIViewController {
     @objc public var videoHttpHeader: [String: Any]?
     
     override public var prefersStatusBarHidden: Bool {
-        return !ZLPhotoUIConfiguration.default().showStatusBarInPreviewInterface
+        !ZLPhotoUIConfiguration.default().showStatusBarInPreviewInterface
     }
     
+    override public var prefersHomeIndicatorAutoHidden: Bool { true }
+    
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        return ZLPhotoUIConfiguration.default().statusBarStyle
+        ZLPhotoUIConfiguration.default().statusBarStyle
     }
     
     deinit {
@@ -262,16 +264,12 @@ public class ZLImagePreviewController: UIViewController {
                 ),
                 animated: false
             )
-            collectionView.performBatchUpdates({
-                self.collectionView.setContentOffset(
-                    CGPoint(
-                        x: (self.view.frame.width + ZLPhotoPreviewController.colItemSpacing) * CGFloat(self.indexBeforOrientationChanged),
-                        y: 0
-                    ),
-                    animated: false
-                )
-            })
         }
+    }
+    
+    override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        collectionView.collectionViewLayout.invalidateLayout()
     }
     
     private func reloadCurrentCell() {
@@ -552,10 +550,12 @@ extension ZLImagePreviewController: UICollectionViewDataSource, UICollectionView
         return baseCell
     }
     
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? ZLPreviewBaseCell)?.willDisplay()
+    }
+    
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if let cell = cell as? ZLPreviewBaseCell {
-            cell.didEndDisplaying()
-        }
+        (cell as? ZLPreviewBaseCell)?.didEndDisplaying()
     }
     
     private func showSaveImageAlert() {

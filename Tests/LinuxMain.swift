@@ -1,7 +1,8 @@
 import XCTest
 
-import ZLTestPodsTests
+import ZLPhotoBrowserTests
 
 var tests = [XCTestCaseEntry]()
-tests += ZLTestPodsTests.allTests()
+tests += ZLPhotoBrowserTests.allTests()
 XCTMain(tests)
+

@@ -550,7 +550,7 @@ open class ZLCustomCamera: UIViewController {
             }
             
             // imageOutPut添加到session之后才能判断supportedFlashModes
-            if !cameraConfig.showFlashSwitch || !imageOutput.supportedFlashModes.contains(.on) {
+            if !cameraConfig.showFlashSwitch || self.torchDevice?.hasFlash == false {
                 ZLMainAsync {
                     self.showFlashBtn = false
                 }
@@ -1253,7 +1253,7 @@ extension ZLCustomCamera: AVCaptureFileOutputRecordingDelegate {
         
         if restartRecordAfterSwitchCamera {
             restartRecordAfterSwitchCamera = false
-            ZLMainAsync() {
+            ZLMainAsync {
                 let pauseTime = self.animateLayer.timeOffset
                 self.animateLayer.speed = 1
                 self.animateLayer.timeOffset = 0

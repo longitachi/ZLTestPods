@@ -28,7 +28,6 @@ import UIKit
 import Photos
 
 public class ZLPhotoPreviewSheet: UIView {
-    
     private enum Layout {
         static let colH: CGFloat = 155
         
@@ -426,7 +425,7 @@ public class ZLPhotoPreviewSheet: UIView {
         let action = ZLCustomAlertAction(title: localLanguageTextValue(.ok), style: .default) { _ in
             ZLPhotoConfiguration.default().noAuthorityCallback?(.library)
         }
-        showAlertController(title: nil, message: String(format: localLanguageTextValue(.noPhotoLibratyAuthority), getAppName()), style: .alert, actions: [action], sender: self.sender)
+        showAlertController(title: nil, message: String(format: localLanguageTextValue(.noPhotoLibratyAuthority), getAppName()), style: .alert, actions: [action], sender: sender)
     }
     
     @objc private func tapAction(_ tap: UITapGestureRecognizer) {
@@ -827,7 +826,6 @@ public class ZLPhotoPreviewSheet: UIView {
     private func handleDataArray(newModel: ZLPhotoModel) {
         arrDataSources.insert(newModel, at: 0)
         let config = ZLPhotoConfiguration.default()
-        let uiConfig = ZLPhotoUIConfiguration.default()
         
         var canSelect = true
         // If mixed selection is not allowed, and the newModel type is video, it will not be selected.
@@ -835,7 +833,7 @@ public class ZLPhotoPreviewSheet: UIView {
             canSelect = false
         }
         // 单选模式，且不显示选择按钮时，不允许选择
-        if config.maxSelectCount == 1, !uiConfig.showSelectBtnWhenSingleSelect {
+        if config.maxSelectCount == 1, !config.showSelectBtnWhenSingleSelect {
             canSelect = false
         }
         if canSelect, canAddModel(newModel, currentSelectCount: arrSelectedModels.count, sender: sender, showAlert: false) {
@@ -861,20 +859,16 @@ public class ZLPhotoPreviewSheet: UIView {
         
         changeCancelBtnTitle()
     }
-    
 }
 
 extension ZLPhotoPreviewSheet: UIGestureRecognizerDelegate {
-    
     override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let location = gestureRecognizer.location(in: self)
         return !baseView.frame.contains(location)
     }
-    
 }
 
 extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let m = arrDataSources[indexPath.row]
         let w = CGFloat(m.asset.pixelWidth)
@@ -892,7 +886,6 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ZLThumbnailPhotoCell.zl.identifier, for: indexPath) as! ZLThumbnailPhotoCell
         
         let config = ZLPhotoConfiguration.default()
-        let uiConfig = ZLPhotoUIConfiguration.default()
         
         let model = arrDataSources[indexPath.row]
         
@@ -927,8 +920,8 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
             }
         }
         
-        if uiConfig.showSelectedIndex,
-           let index = arrSelectedModels.firstIndex(where: { $0 == model }){
+        if config.showSelectedIndex,
+           let index = arrSelectedModels.firstIndex(where: { $0 == model }) {
             setCellIndex(cell, showIndexLabel: true, index: index + 1)
         } else {
             cell.indexLabel.isHidden = true
@@ -1031,7 +1024,7 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     private func setCellIndex(_ cell: ZLThumbnailPhotoCell?, showIndexLabel: Bool, index: Int) {
-        guard ZLPhotoUIConfiguration.default().showSelectedIndex else {
+        guard ZLPhotoConfiguration.default().showSelectedIndex else {
             return
         }
         
@@ -1047,7 +1040,7 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
         cameraBtn.alpha = cameraIsEnable ? 1 : 0.3
         cameraBtn.isEnabled = cameraIsEnable
         
-        let showIndex = uiConfig.showSelectedIndex
+        let showIndex = config.showSelectedIndex
         let showMask = uiConfig.showSelectedMask || uiConfig.showInvalidMask
         
         guard showIndex || showMask else {
@@ -1125,7 +1118,7 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     private func changeCancelBtnTitle() {
-        if arrSelectedModels.count > 0 {
+        if !arrSelectedModels.isEmpty {
             cancelBtn.setTitle(String(format: "%@(%ld)", localLanguageTextValue(.done), arrSelectedModels.count), for: .normal)
             cancelBtn.setTitleColor(.zl.previewBtnHighlightTitleColor, for: .normal)
         } else {
@@ -1133,10 +1126,12 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
             cancelBtn.setTitleColor(.zl.previewBtnTitleColor, for: .normal)
         }
     }
-    
 }
 
 extension ZLPhotoPreviewSheet: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
     
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true) {
@@ -1145,16 +1140,13 @@ extension ZLPhotoPreviewSheet: UIImagePickerControllerDelegate, UINavigationCont
             self.save(image: image, videoUrl: url)
         }
     }
-    
 }
 
 extension ZLPhotoPreviewSheet: PHPhotoLibraryChangeObserver {
-    
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
         ZLMainAsync {
             self.loadPhotos()
         }
     }
-    
 }

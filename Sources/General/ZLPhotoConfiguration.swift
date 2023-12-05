@@ -176,6 +176,10 @@ public class ZLPhotoConfiguration: NSObject {
     /// - warning: Only valid when `allowSelectOriginal = false`, Defaults to false.
     public var alwaysRequestOriginal = false
     
+    /// Whether to show the total size of selected photos when selecting the original image. Defaults to true.
+    /// - Note: The framework uses a conversion ratio of 1KB=1024Byte, while the system album uses 1KB=1000Byte, so the displayed photo size within the framework will be smaller than the size in the system album.
+    public var showOriginalSizeWhenSelectOriginal = true
+    
     /// Allow access to the preview large image interface (That is, whether to allow access to the large image interface after clicking the thumbnail image). Defaults to true.
     public var allowPreviewPhotos = true
     
@@ -184,6 +188,12 @@ public class ZLPhotoConfiguration: NSObject {
     
     /// Whether to display the selected count on the button. Defaults to true.
     public var showSelectCountOnDoneBtn = true
+    
+    /// In single selection mode, whether to display the selection button. Defaults to false.
+    public var showSelectBtnWhenSingleSelect = false
+
+    /// Display the index of the selected photos. Defaults to true.
+    public var showSelectedIndex = true
     
     /// Maximum cropping time when editing video, unit: second. Defaults to 10.
     public var maxEditVideoTime: ZLPhotoConfiguration.Second = 10
@@ -219,14 +229,6 @@ public class ZLPhotoConfiguration: NSObject {
     
     /// This block will be called when cancel selecting an asset.
     public var didDeselectAsset: ((PHAsset) -> Void)?
-    
-    /// If user choose limited Photo mode, a button with '+' will be added to the ZLThumbnailViewController. It will call PHPhotoLibrary.shared().presentLimitedLibraryPicker(from:) to add photo. Defaults to true.
-    /// E.g., Sina Weibo's ImagePicker
-    public var showAddPhotoButton = true
-    
-    /// iOS14 limited Photo mode, will show collection footer view in ZLThumbnailViewController.
-    /// Will go to system setting if clicked. Defaults to true.
-    public var showEnterSettingTips = true
     
     /// The maximum number of frames for GIF images. To avoid crashes due to memory spikes caused by loading GIF images with too many frames, it is recommended that this value is not too large. Defaults to 50.
     public var maxFrameCountForGIF = 50
