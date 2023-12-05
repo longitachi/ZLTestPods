@@ -167,7 +167,7 @@
 		FDCBAFA22B1EF793000860FD = {
 			isa = PBXGroup;
 			children = (
-				FDCBAFAE2B1EF793000860FD /* Sourses */,
+				FDCBAFAE2B1EF793000860FD /* Sources */,
 				FDCBAFAD2B1EF793000860FD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FDCBAFAE2B1EF793000860FD /* Sourses */ = {
+		FDCBAFAE2B1EF793000860FD /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				FDCBAFAF2B1EF793000860FD /* ZLTestPods.h */,
@@ -192,7 +192,7 @@
 				FDCBB0152B1EF9A9000860FD /* ZLPhotoBrowser.bundle */,
 				FDCBAFB02B1EF793000860FD /* ZLTestPods.docc */,
 			);
-			path = Sourses;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		FDCBB02B2B1EF9D8000860FD /* Edit */ = {
